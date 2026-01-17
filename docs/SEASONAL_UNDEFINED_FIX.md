@@ -1,10 +1,10 @@
 # Fix: TypeError - Cannot destructure 'favorableMonths' of 'seasonal'
 
 ## Vấn đề gốc
-```
+\`\`\`
 TypeError: Cannot destructure property 'favorableMonths' of 'seasonal' as it is undefined.
 at generateTiming (lib/ai/fallback-diagnosis.ts:XX:XX)
-```
+\`\`\`
 
 Khi OpenAI rate limit exceeded → fallback được gọi → `generateTiming()` nhận `seasonal` undefined → crash.
 
@@ -16,7 +16,7 @@ Khi OpenAI rate limit exceeded → fallback được gọi → `generateTiming()
 
 **File:** `lib/ai/fallback-diagnosis.ts`
 
-```typescript
+\`\`\`typescript
 function generateTiming(seasonal?: any): string {
   // ⛔ BẮT BUỘC: Default destructuring ngay đầu function
   const { 
@@ -27,7 +27,7 @@ function generateTiming(seasonal?: any): string {
   
   // ... phần còn lại an toàn
 }
-```
+\`\`\`
 
 **Lý do:** Ngăn chặn destructuring undefined ngay từ đầu.
 
@@ -37,7 +37,7 @@ function generateTiming(seasonal?: any): string {
 
 **File:** `lib/ai/fallback-diagnosis.ts`
 
-```typescript
+\`\`\`typescript
 type DiagnosisResult = {
   summary: string
   mechanism: string
@@ -70,7 +70,7 @@ export function generateIntelligentFallback(
     },
   }
 }
-```
+\`\`\`
 
 **Lý do:** Đảm bảo fallback result luôn có structure đúng.
 
@@ -80,7 +80,7 @@ export function generateIntelligentFallback(
 
 **File:** `app/api/diagnose-ai/route.ts`
 
-```typescript
+\`\`\`typescript
 const intelligentFallback = generateIntelligentFallback(rawCalculation)
 
 const fallbackResult = {
@@ -91,7 +91,7 @@ const fallbackResult = {
     ...intelligentFallback, // ✅ Spread toàn bộ, bao gồm seasonal
   },
 }
-```
+\`\`\`
 
 **Lý do:** Frontend nhận được đầy đủ data kể cả khi AI fail.
 
@@ -101,7 +101,7 @@ const fallbackResult = {
 
 **File:** `app/api/diagnose-ai/route.ts`
 
-```typescript
+\`\`\`typescript
 function parseAIResponse(text: string) {
   return {
     summary: "...",
@@ -116,7 +116,7 @@ function parseAIResponse(text: string) {
     },
   }
 }
-```
+\`\`\`
 
 **Lý do:** Consistency - cả AI response và fallback đều có cùng schema.
 
@@ -124,7 +124,7 @@ function parseAIResponse(text: string) {
 
 ## Kiến trúc
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────┐
 │  performComprehensiveDiagnosis()                │
 │  ✅ LUÔN return seasonalInfluence               │
@@ -157,7 +157,7 @@ function parseAIResponse(text: string) {
                 │
                 ▼
           Frontend OK
-```
+\`\`\`
 
 ---
 
@@ -165,18 +165,18 @@ function parseAIResponse(text: string) {
 
 ### ❌ Trước khi fix:
 
-```bash
+\`\`\`bash
 POST /api/diagnose-ai
 → OpenAI rate limit
 → generateIntelligentFallback()
 → generateTiming(undefined)
 → 💥 TypeError: Cannot destructure
 → 500 Internal Server Error
-```
+\`\`\`
 
 ### ✅ Sau khi fix:
 
-```bash
+\`\`\`bash
 POST /api/diagnose-ai
 → OpenAI rate limit
 → generateIntelligentFallback(rawCalculation)
@@ -184,13 +184,13 @@ POST /api/diagnose-ai
 → ✅ Default destructuring: favorableMonths = []
 → ✅ Return full schema với seasonal
 → 200 OK với fallback data đầy đủ
-```
+\`\`\`
 
 ---
 
 ## Commit Message
 
-```
+\`\`\`
 fix(ai): prevent seasonal undefined error in fallback
 
 - Add defensive coding in generateTiming() with default destructuring
@@ -201,7 +201,7 @@ fix(ai): prevent seasonal undefined error in fallback
 
 Fixes: TypeError when OpenAI rate limit exceeded
 Impact: Fallback system now works correctly with full data
-```
+\`\`\`
 
 ---
 

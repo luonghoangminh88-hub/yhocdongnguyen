@@ -8,16 +8,16 @@ Dựa trên phản hồi đánh giá 80-85% về mặt học thuật, đã thự
 
 **Giải pháp:**
 - Thêm bản đồ triệu chứng → bộ phận → ngũ hành vào system prompt:
-  ```
+  \`\`\`
   • Chân/gối/xương: Khảm (Thủy-Thận), Chấn/Tốn (Mộc-Gan)
-  ```
+  \`\`\`
 
 - Thêm hướng dẫn "Cách nối logic giữa triệu chứng và quẻ":
-  ```
+  \`\`\`
   "Đau gối thuộc Thận (Thủy) và gân-cơ (Gan-Mộc). Quẻ cho thấy Phế khí mạnh (Kim vượng) 
   đang kiểm soát Can khí, do đó triệu chứng xuất hiện nhưng chưa đến mức tổn thương sâu, 
   chủ yếu là biểu hiện cơ học hoặc thoái hóa, không phải nội thương nặng."
-  ```
+  \`\`\`
 
 **Kết quả:** AI bắt buộc phải giải thích mối liên hệ gián tiếp giữa quẻ và triệu chứng.
 
@@ -27,14 +27,14 @@ Dựa trên phản hồi đánh giá 80-85% về mặt học thuật, đã thự
 
 **Giải pháp:**
 - Thêm quy tắc vào system prompt:
-  ```
+  \`\`\`
   - TRÁNH lặp nội dung: Mỗi khái niệm chỉ giải thích 1 lần duy nhất
-  ```
+  \`\`\`
   
 - Thêm lưu ý cuối:
-  ```
+  \`\`\`
   - MỖI khái niệm chỉ giải thích 1 LẦN duy nhất.
-  ```
+  \`\`\`
 
 **Kết quả:** Giảm 40% token usage, tăng rõ ràng cho user.
 
@@ -44,17 +44,17 @@ Dựa trên phản hồi đánh giá 80-85% về mặt học thuật, đã thự
 
 **Giải pháp:**
 - Thay đổi quy ước ngôn ngữ:
-  ```
+  \`\`\`
   - Giọng điệu: Cân bằng giữa tích cực và thực tế. KHÔNG trấn an quá mức.
     • Tốt: "Về tổng thể là tín hiệu tốt, tuy nhiên vẫn cần lưu ý triệu chứng cụ thể."
     • Xấu: "Rất tốt! Tin tốt! Cơ thể bạn đang khỏe mạnh!" (khi user đang đau)
-  ```
+  \`\`\`
 
 - Sửa phần TỔNG QUAN:
-  ```
+  \`\`\`
   Mở đầu cân bằng: nhận diện triệu chứng + đánh giá tổng thể dựa trên quẻ.
   VD: "Về tổng thể là tín hiệu tốt, tuy nhiên vẫn cần quan tâm đến vấn đề [triệu chứng] bạn đang gặp."
-  ```
+  \`\`\`
 
 **Kết quả:** Tăng 67% độ tin tưởng, user cảm thấy được thấu hiểu.
 
@@ -64,15 +64,15 @@ Dựa trên phản hồi đánh giá 80-85% về mặt học thuật, đã thự
 
 **Giải pháp:**
 - Thêm hạn chế trong nguyên tắc vàng:
-  ```
+  \`\`\`
   2. Có VÍ DỤ cụ thể, dễ hiểu (chỉ 1 ẩn dụ, tránh "võ sĩ", "đánh bại")
-  ```
+  \`\`\`
 
 - Hướng dẫn thay thế:
-  ```
+  \`\`\`
   - Tránh ẩn dụ mạnh như "võ sĩ", "đánh bại kẻ địch". 
     Nếu cần ẩn dụ, dùng y học: "điều tiết", "cân bằng", "hỗ trợ".
-  ```
+  \`\`\`
 
 **Kết quả:** Giọng văn chuyên nghiệp, phù hợp bối cảnh y học.
 

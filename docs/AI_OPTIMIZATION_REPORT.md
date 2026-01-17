@@ -3,12 +3,12 @@
 ## Vấn Đề Ban Đầu
 
 ### Logs Error:
-```
+\`\`\`
 Too Many Requests
 Budget: $0.10 / $120
 Total tokens: 1,020,510
 Total requests: 152
-```
+\`\`\`
 
 ### Phân Tích:
 - **Token/request:** 1,020,510 / 152 = ~6,713 tokens/request
@@ -95,7 +95,7 @@ Total requests: 152
 
 ## Monitoring Commands
 
-```bash
+\`\`\`bash
 # Check logs
 vercel logs --follow
 

@@ -17,9 +17,9 @@
 ## II. Các quy tắc Language Policy
 
 ### 1. Ngôn ngữ đầu ra (Output Language)
-```
+\`\`\`
 Luôn trả lời bằng TIẾNG VIỆT hiện đại
-```
+\`\`\`
 
 **Lý do:**
 - Cố định ngôn ngữ giúp output consistency cao
@@ -30,9 +30,9 @@ Luôn trả lời bằng TIẾNG VIỆT hiện đại
 - Project có user quốc tế (cần mở rộng sau)
 
 ### 2. Thuật ngữ chuyên môn (Technical Terms)
-```
+\`\`\`
 Tránh dùng thuật ngữ Hán-cổ; nếu buộc dùng, phải giải thích ngắn gọn
-```
+\`\`\`
 
 **Ví dụ:**
 
@@ -46,9 +46,9 @@ Tránh dùng thuật ngữ Hán-cổ; nếu buộc dùng, phải giải thích n
 - Giảm confusion, tăng actionable advice
 
 ### 3. Từ ngữ gây lo sợ (Fear-inducing Language)
-```
+\`\`\`
 Không dùng từ ngữ gây lo sợ (nguy hiểm, tử vong, nặng nề...)
-```
+\`\`\`
 
 **Ví dụ:**
 
@@ -63,9 +63,9 @@ Không dùng từ ngữ gây lo sợ (nguy hiểm, tử vong, nặng nề...)
 - Giảm liability risk
 
 ### 4. Xử lý cảm xúc user (Emotional Response)
-```
+\`\`\`
 Khi user dùng từ cảm xúc mạnh, phản hồi bằng ngôn ngữ trấn an
-```
+\`\`\`
 
 **Ví dụ:**
 
@@ -80,9 +80,9 @@ Khi user dùng từ cảm xúc mạnh, phản hồi bằng ngôn ngữ trấn an
 - Tạo kết nối emotional với user
 
 ### 5. Diễn giải thuật ngữ (Term Explanation)
-```
+\`\`\`
 Thuật ngữ Ngũ hành-Tạng phủ phải được diễn giải bằng lời đời thường
-```
+\`\`\`
 
 **Ví dụ:**
 
@@ -95,14 +95,14 @@ Thuật ngữ Ngũ hành-Tạng phủ phải được diễn giải bằng lời
 | Thổ | Thổ (lá lách, tiêu hóa) |
 
 **Template:**
-```
+\`\`\`
 [Thuật ngữ] ([Cơ quan tương ứng], [Chức năng đời thường])
-```
+\`\`\`
 
 ### 6. Formatting Rules
-```
+\`\`\`
 Không sử dụng emoji, ký hiệu lạ, hoặc markdown phức tạp
-```
+\`\`\`
 
 **Cho phép:**
 - `##` Heading
@@ -159,12 +159,12 @@ Không sử dụng emoji, ký hiệu lạ, hoặc markdown phức tạp
 - Có budget cho multi-language caching
 
 **Cách implement:**
-```typescript
+\`\`\`typescript
 // Thêm vào system instruction:
 if (userLanguage !== 'vi') {
   "Nếu user đặt câu hỏi bằng ngôn ngữ khác, hãy trả lời bằng chính ngôn ngữ đó, nhưng giữ thuật ngữ Mai Hoa bằng tiếng Việt kèm giải thích."
 }
-```
+\`\`\`
 
 **Lưu ý:**
 - Sẽ giảm cache efficiency 40-50%

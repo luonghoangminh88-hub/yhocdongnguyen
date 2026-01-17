@@ -8,11 +8,28 @@ export async function getSolutionsByHexagram(hexagram: string) {
   const { data: solutions, error } = await supabase
     .from("solutions")
     .select("*")
-    .eq("hexagram", hexagram)
+    .eq("hexagram_key", hexagram)
     .order("solution_type")
 
   if (error) {
     console.error("[v0] Error fetching solutions:", error)
+    return { error: "Không thể tải giải pháp" }
+  }
+
+  return { solutions }
+}
+
+export async function getSolutionsByHexagramKey(hexagramKey: string) {
+  const supabase = await getSupabaseServerClient()
+
+  const { data: solutions, error } = await supabase
+    .from("solutions")
+    .select("*")
+    .eq("hexagram_key", hexagramKey)
+    .order("solution_type")
+
+  if (error) {
+    console.error("[v0] Error fetching solutions by key:", error)
     return { error: "Không thể tải giải pháp" }
   }
 

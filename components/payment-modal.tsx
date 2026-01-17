@@ -1,17 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { CreditCard, Loader2, AlertCircle, CheckCircle } from "lucide-react"
+import { Loader2, AlertCircle, CheckCircle, Copy, QrCode, RefreshCw, Smartphone, Monitor } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { processPayment } from "@/lib/actions/payment-actions"
-import { getSolutionsByHexagram } from "@/lib/actions/solution-actions"
+import { getSolutionsByHexagram, getSolutionsByHexagramKey } from "@/lib/actions/solution-actions"
 import { getCurrentUser } from "@/lib/actions/auth-actions"
 import { getTrigramByNumber } from "@/lib/data/trigram-data"
+import { formatTimoAccountNumber, TIMO_BANK_CODE } from "@/lib/timo-payment"
+import type { TimoDeposit } from "@/lib/timo-payment"
 
 interface PaymentModalProps {
   isOpen: boolean
@@ -31,11 +30,11 @@ const PACKAGE_INFO = {
     solutionType: "acupoint" as const,
   },
   2: {
-    name: "Gói Dùng Thuốc",
+    name: "Gói Nam Dược",
     price: "199.000đ",
     amount: 199000,
     route: "/treatment/herbal",
-    solutionType: "herbal" as const,
+    solutionType: "prescription" as const,
   },
   3: {
     name: "Gói Tượng Số",
@@ -48,43 +47,59 @@ const PACKAGE_INFO = {
 
 export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, moving }: PaymentModalProps) {
   const router = useRouter()
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [cardNumber, setCardNumber] = useState("")
-  const [cardName, setCardName] = useState("")
-  const [expiry, setExpiry] = useState("")
-  const [cvv, setCvv] = useState("")
+  const [isCreating, setIsCreating] = useState(false)
+  const [isChecking, setIsChecking] = useState(false)
+  const [deposit, setDeposit] = useState<TimoDeposit | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [copied, setCopied] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   if (!packageNumber) return null
 
   const packageInfo = PACKAGE_INFO[packageNumber]
 
-  const handlePayment = async () => {
+  const handleCreateDeposit = async () => {
     setError(null)
-    setIsProcessing(true)
+    setIsCreating(true)
 
     try {
-      // Step 1: Check if user is authenticated
+      // Check authentication
       const { user } = await getCurrentUser()
 
       if (!user) {
         setError("Bạn cần đăng nhập để thanh toán")
-        setIsProcessing(false)
+        setIsCreating(false)
         return
       }
 
-      // Step 2: Get hexagram name
-      const upperTrigram = getTrigramByNumber(upper)
-      const lowerTrigram = getTrigramByNumber(lower)
-      const hexagramName = `${upperTrigram.vietnamese} ${lowerTrigram.vietnamese}`
+      const hexagramKey = `${upper}_${lower}_${moving}`
 
-      // Step 3: Find solution ID for this hexagram and package type
-      const { solutions, error: solutionError } = await getSolutionsByHexagram(hexagramName)
+      // Get solution
+      let { solutions, error: solutionError } = await getSolutionsByHexagramKey(hexagramKey)
+
+      if (!solutions || solutions.length === 0) {
+        const upperTrigram = getTrigramByNumber(upper)
+        const lowerTrigram = getTrigramByNumber(lower)
+        const hexagramName = `${upperTrigram.vietnamese} ${lowerTrigram.vietnamese}`
+
+        const oldFormatResult = await getSolutionsByHexagram(hexagramName)
+        solutions = oldFormatResult.solutions
+        solutionError = oldFormatResult.error
+      }
 
       if (solutionError || !solutions || solutions.length === 0) {
         setError("Không tìm thấy giải pháp cho quẻ này")
-        setIsProcessing(false)
+        setIsCreating(false)
         return
       }
 
@@ -92,51 +107,128 @@ export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, mov
 
       if (!solution) {
         setError(`Không tìm thấy ${packageInfo.name} cho quẻ này`)
-        setIsProcessing(false)
+        setIsCreating(false)
         return
       }
 
-      // Step 4: Process payment (simulated for demo, but uses real backend)
-      const result = await processPayment({
-        solutionId: solution.id,
-        paymentMethod: "card",
-        amount: packageInfo.amount,
-        cardInfo: {
-          cardNumber,
-          cardName,
-          expiry,
-          cvv,
-        },
+      // Create Timo deposit
+      const response = await fetch("/api/deposits/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          solution_id: solution.id,
+          amount: packageInfo.amount,
+        }),
       })
 
-      if (result.error) {
-        setError(result.error)
-        setIsProcessing(false)
+      const result = await response.json()
+
+      if (!response.ok || result.error) {
+        setError(result.error || "Không thể tạo giao dịch")
+        setIsCreating(false)
         return
       }
 
-      // Step 5: Payment successful!
-      setSuccess(true)
-      setIsProcessing(false)
+      setDeposit(result.deposit)
+      setIsCreating(false)
 
-      // Wait a bit to show success message, then redirect
-      setTimeout(() => {
-        onClose()
-        const params = new URLSearchParams({
-          upper: upper.toString(),
-          lower: lower.toString(),
-          moving: moving.toString(),
-        })
-        router.push(`${packageInfo.route}?${params.toString()}`)
-        router.refresh() // Refresh to update access state
-      }, 1500)
+      // Start polling for payment status
+      startStatusPolling(result.deposit.id)
     } catch (err) {
       console.error("[v0] Payment error:", err)
-      setError("Đã xảy ra lỗi trong quá trình thanh toán")
-      setIsProcessing(false)
+      setError("Đã xảy ra lỗi trong quá trình tạo giao dịch")
+      setIsCreating(false)
     }
   }
 
+  const startStatusPolling = (depositId: string) => {
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch("/api/deposits/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deposit_id: depositId }),
+        })
+
+        const result = await response.json()
+
+        if (result.deposit && result.deposit.status === "completed") {
+          clearInterval(interval)
+          setSuccess(true)
+
+          // Redirect after showing success
+          setTimeout(() => {
+            onClose()
+            const params = new URLSearchParams({
+              upper: upper.toString(),
+              lower: lower.toString(),
+              moving: moving.toString(),
+            })
+            router.push(`${packageInfo.route}?${params.toString()}`)
+            router.refresh()
+          }, 2000)
+        }
+      } catch (err) {
+        console.error("[v0] Error checking status:", err)
+      }
+    }, 10000) // Check every 10 seconds
+
+    return () => clearInterval(interval)
+  }
+
+  const handleCopy = (text: string, type: string) => {
+    navigator.clipboard.writeText(text)
+    setCopied(type)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
+  const generateBankingDeepLink = () => {
+    if (!deposit) return "#"
+
+    // VietQR deep link format for universal banking apps
+    const qrData = `${TIMO_BANK_CODE}${deposit.payment_data?.account_number}${deposit.amount}${deposit.payment_code}`
+
+    // Try VietQR universal link first (works with most banking apps)
+    return `https://dl.vietqr.io/pay?bankCode=${TIMO_BANK_CODE}&accountNumber=${deposit.payment_data?.account_number}&amount=${deposit.amount}&description=${encodeURIComponent(deposit.payment_code)}`
+  }
+
+  const handleRefreshStatus = async () => {
+    if (!deposit) return
+
+    setIsChecking(true)
+    try {
+      const response = await fetch("/api/deposits/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deposit_id: deposit.id }),
+      })
+
+      const result = await response.json()
+
+      if (result.deposit) {
+        setDeposit(result.deposit)
+
+        if (result.deposit.status === "completed") {
+          setSuccess(true)
+          setTimeout(() => {
+            onClose()
+            const params = new URLSearchParams({
+              upper: upper.toString(),
+              lower: lower.toString(),
+              moving: moving.toString(),
+            })
+            router.push(`${packageInfo.route}?${params.toString()}`)
+            router.refresh()
+          }, 2000)
+        }
+      }
+    } catch (err) {
+      console.error("[v0] Error refreshing status:", err)
+    }
+    setIsChecking(false)
+  }
+
+  // Success state
   if (success) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -155,6 +247,178 @@ export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, mov
     )
   }
 
+  // Show QR code if deposit created
+  if (deposit) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">
+              {isMobile ? "Chuyển Khoản Thanh Toán" : "Quét Mã QR Để Thanh Toán"}
+            </DialogTitle>
+            <DialogDescription>{packageInfo.name}</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {isMobile ? (
+              <>
+                {/* Mobile: Primary CTA button to open banking app */}
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => (window.location.href = generateBankingDeepLink())}
+                    className="w-full h-14 text-lg"
+                    size="lg"
+                  >
+                    <Smartphone className="mr-2 h-5 w-5" />
+                    Mở App Ngân Hàng
+                  </Button>
+
+                  <p className="text-xs text-center text-muted-foreground">
+                    Hoặc chuyển khoản thủ công với thông tin bên dưới
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Desktop: Show QR Code */}
+                <div className="flex justify-center bg-white p-4 rounded-lg">
+                  {deposit.payment_data?.qr_url ? (
+                    <img
+                      src={deposit.payment_data.qr_url || "/placeholder.svg"}
+                      alt="Mã QR thanh toán"
+                      className="w-64 h-64"
+                    />
+                  ) : (
+                    <div className="w-64 h-64 flex items-center justify-center bg-muted">
+                      <QrCode className="w-12 h-12 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Monitor className="w-4 h-4" />
+                  <span>Quét bằng app ngân hàng trên điện thoại</span>
+                </div>
+              </>
+            )}
+
+            <div className="space-y-3 bg-primary/5 p-4 rounded-lg border-2 border-primary/20">
+              <div className="text-center pb-2 border-b border-primary/20">
+                <p className="text-xs text-muted-foreground">Thông tin chuyển khoản</p>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Ngân hàng</p>
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium text-foreground">Timo (Viet Capital Bank)</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Số tài khoản</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono font-medium text-foreground flex-1">
+                      {formatTimoAccountNumber(deposit.payment_data?.account_number || "")}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleCopy(deposit.payment_data?.account_number || "", "account")}
+                    >
+                      <Copy className="w-4 h-4" />
+                      {copied === "account" ? "✓" : ""}
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Tên chủ tài khoản</p>
+                  <p className="font-medium text-foreground">{deposit.payment_data?.account_name}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Số tiền</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-2xl font-bold text-primary flex-1">
+                      {deposit.amount.toLocaleString("vi-VN")} VND
+                    </p>
+                    <Button size="sm" variant="outline" onClick={() => handleCopy(deposit.amount.toString(), "amount")}>
+                      <Copy className="w-4 h-4" />
+                      {copied === "amount" ? "✓" : ""}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t-2 border-primary/30">
+                  <p className="text-xs text-muted-foreground mb-1">
+                    <span className="text-red-500 font-bold">*</span> Nội dung chuyển khoản (Bắt buộc)
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="font-mono font-bold text-lg text-primary flex-1 bg-primary/10 px-3 py-2 rounded">
+                      {deposit.payment_code}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => handleCopy(deposit.payment_code, "code")}
+                      className="h-10"
+                    >
+                      <Copy className="w-4 h-4 mr-1" />
+                      {copied === "code" ? "Đã copy" : "Copy"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Instructions */}
+            <Alert>
+              <AlertDescription className="text-sm">
+                <p className="font-semibold mb-2">Hướng dẫn thanh toán:</p>
+                <ol className="list-decimal list-inside space-y-1.5">
+                  {isMobile ? (
+                    <>
+                      <li>Nhấn nút "Mở App Ngân Hàng" phía trên</li>
+                      <li>Hoặc mở app ngân hàng và chuyển khoản thủ công</li>
+                    </>
+                  ) : (
+                    <li>Quét mã QR bằng app ngân hàng trên điện thoại</li>
+                  )}
+                  <li>
+                    <strong className="text-red-600">Nhập đúng nội dung: {deposit.payment_code}</strong>
+                  </li>
+                  <li>Xác nhận thanh toán đúng số tiền {deposit.amount.toLocaleString("vi-VN")}đ</li>
+                  <li>Giao dịch sẽ được xác nhận tự động trong 1-5 phút</li>
+                </ol>
+              </AlertDescription>
+            </Alert>
+
+            {/* Status */}
+            <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                <span className="text-sm font-medium text-yellow-700 dark:text-yellow-400">Đang chờ thanh toán...</span>
+              </div>
+              <Button size="sm" variant="ghost" onClick={handleRefreshStatus} disabled={isChecking}>
+                <RefreshCw className={`w-4 h-4 ${isChecking ? "animate-spin" : ""}`} />
+                <span className="ml-1 text-xs">Kiểm tra</span>
+              </Button>
+            </div>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  // Initial state - show package info and create deposit button
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -170,7 +434,6 @@ export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, mov
             <span className="text-2xl font-bold text-primary">{packageInfo.price}</span>
           </div>
 
-          {/* Error Alert */}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -178,79 +441,25 @@ export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, mov
             </Alert>
           )}
 
-          {/* Payment Form */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="cardName">Tên trên thẻ</Label>
-              <Input
-                id="cardName"
-                placeholder="NGUYEN VAN A"
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-                disabled={isProcessing}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cardNumber">Số thẻ</Label>
-              <div className="relative">
-                <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={cardNumber}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, "")
-                    const formatted = value.match(/.{1,4}/g)?.join(" ") || value
-                    setCardNumber(formatted)
-                  }}
-                  maxLength={19}
-                  disabled={isProcessing}
-                />
-                <CreditCard className="absolute right-3 top-3 w-5 h-5 text-muted-foreground" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="expiry">Ngày hết hạn</Label>
-                <Input
-                  id="expiry"
-                  placeholder="MM/YY"
-                  maxLength={5}
-                  value={expiry}
-                  onChange={(e) => setExpiry(e.target.value)}
-                  disabled={isProcessing}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cvv">CVV</Label>
-                <Input
-                  id="cvv"
-                  placeholder="123"
-                  maxLength={3}
-                  type="password"
-                  value={cvv}
-                  onChange={(e) => setCvv(e.target.value)}
-                  disabled={isProcessing}
-                />
-              </div>
-            </div>
-          </div>
-
           {/* Payment Button */}
-          <Button onClick={handlePayment} disabled={isProcessing} className="w-full" size="lg">
-            {isProcessing ? (
+          <Button onClick={handleCreateDeposit} disabled={isCreating} className="w-full" size="lg">
+            {isCreating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Đang xử lý...
+                Đang tạo mã QR...
               </>
             ) : (
-              `Thanh toán ${packageInfo.price}`
+              <>
+                <QrCode className="mr-2 h-4 w-4" />
+                Tạo mã QR thanh toán
+              </>
             )}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
-            Đây là giao diện thanh toán giả lập cho mục đích demo
+            Thanh toán qua chuyển khoản ngân hàng Timo
+            <br />
+            Tự động xác nhận trong 1-5 phút
           </p>
         </div>
       </DialogContent>

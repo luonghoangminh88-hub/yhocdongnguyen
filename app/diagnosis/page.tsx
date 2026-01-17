@@ -393,6 +393,10 @@ function DiagnosisContent() {
             day={day}
             hour={hour}
             minute={minute}
+            gender={gender}
+            age={age}
+            painLocation={painLocation}
+            userLocation={userLocation}
           />
 
           {useAI && isLoadingAI && !aiCompleted && (
@@ -600,95 +604,98 @@ function DiagnosisContent() {
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-6">
-                  <div
-                    className={`border-2 rounded-lg overflow-hidden space-y-4 transition-all hover:shadow-lg cursor-pointer ${recommendedPackage.primary === "nam-duoc" ? "border-primary bg-primary/5" : "border-border"}`}
-                    onClick={() => handlePackageClick(1)}
-                  >
-                    <div className="relative h-48 bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/20 dark:to-green-800/10">
+                  <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 relative overflow-hidden">
+                    {recommendedPackage.primary === "khai-huyet" && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className="bg-primary text-primary-foreground shadow-md">Phù hợp với bạn</Badge>
+                      </div>
+                    )}
+                    <div className="relative h-48 bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/20 dark:to-red-800/10">
                       <img
                         src="/traditional-herbal-medicine-herbs-natural-remedies.jpg"
                         alt="Gói Nam Dược"
                         className="w-full h-full object-cover"
                       />
-                      {recommendedPackage.primary === "nam-duoc" && (
-                        <Badge className="absolute top-3 right-3">Phù hợp với bạn</Badge>
-                      )}
                     </div>
                     <div className="p-6 space-y-4">
                       <h3 className="text-xl font-bold">Gói Nam Dược</h3>
-                      <p className="text-3xl font-bold text-primary">500.000đ</p>
+                      <p className="text-3xl font-bold text-primary">199.000đ</p>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         Bài thảo dược thiên nhiên được pha chế riêng theo ngũ hành cá nhân, giúp cân bằng âm dương và
                         tăng cường sức khỏe toàn diện
                       </p>
                       <Button
+                        size="lg"
                         className="w-full"
-                        variant={recommendedPackage.primary === "nam-duoc" ? "default" : "outline"}
+                        variant={recommendedPackage.primary === "khai-huyet" ? "default" : "outline"}
+                        onClick={() => handlePackageClick(1)}
                       >
                         Chọn gói này
                       </Button>
                     </div>
-                  </div>
+                  </Card>
 
-                  <div
-                    className={`border-2 rounded-lg overflow-hidden space-y-4 transition-all hover:shadow-lg cursor-pointer ${recommendedPackage.primary === "khai-huyet" ? "border-primary bg-primary/5" : "border-border"}`}
-                    onClick={() => handlePackageClick(2)}
-                  >
-                    <div className="relative h-48 bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/20 dark:to-blue-800/10">
+                  <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 relative overflow-hidden">
+                    {recommendedPackage.primary === "nam-duoc" && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className="bg-primary text-primary-foreground shadow-md">Phù hợp với bạn</Badge>
+                      </div>
+                    )}
+                    <div className="relative h-48 bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/20 dark:to-green-800/10">
                       <img
                         src="/acupressure-points-meridian-therapy-wellness.jpg"
                         alt="Gói Khai Huyệt"
                         className="w-full h-full object-cover"
                       />
-                      {recommendedPackage.primary === "khai-huyet" && (
-                        <Badge className="absolute top-3 right-3">Phù hợp với bạn</Badge>
-                      )}
                     </div>
                     <div className="p-6 space-y-4">
                       <h3 className="text-xl font-bold">Gói Khai Huyệt</h3>
-                      <p className="text-3xl font-bold text-primary">800.000đ</p>
+                      <p className="text-3xl font-bold text-primary">299.000đ</p>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         Phương pháp khai thông kinh lạc và huyệt đạo truyền thống, giúp lưu thông khí huyết và phục hồi
                         năng lượng cơ thể
                       </p>
                       <Button
+                        size="lg"
                         className="w-full"
-                        variant={recommendedPackage.primary === "khai-huyet" ? "default" : "outline"}
+                        variant={recommendedPackage.primary === "nam-duoc" ? "default" : "outline"}
+                        onClick={() => handlePackageClick(2)}
                       >
                         Chọn gói này
                       </Button>
                     </div>
-                  </div>
+                  </Card>
 
-                  <div
-                    className={`border-2 rounded-lg overflow-hidden space-y-4 transition-all hover:shadow-lg cursor-pointer ${recommendedPackage.primary === "tuong-so" ? "border-primary bg-primary/5" : "border-border"}`}
-                    onClick={() => handlePackageClick(3)}
-                  >
+                  <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 relative overflow-hidden">
+                    {recommendedPackage.primary === "tuong-so" && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className="bg-primary text-primary-foreground shadow-md">Phù hợp với bạn</Badge>
+                      </div>
+                    )}
                     <div className="relative h-48 bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900/20 dark:to-purple-800/10">
                       <img
                         src="/i-ching-hexagram-yijing-divination-ancient-wisdom.jpg"
                         alt="Gói Tượng Số"
                         className="w-full h-full object-cover"
                       />
-                      {recommendedPackage.primary === "tuong-so" && (
-                        <Badge className="absolute top-3 right-3">Phù hợp với bạn</Badge>
-                      )}
                     </div>
                     <div className="p-6 space-y-4">
                       <h3 className="text-xl font-bold">Gói Tượng Số</h3>
-                      <p className="text-3xl font-bold text-primary">1.200.000đ</p>
+                      <p className="text-3xl font-bold text-primary">99.000đ</p>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         Phân tích chuyên sâu Mai Hoa Dịch Số với lộ trình dài hạn, giúp bạn hiểu rõ vận mệnh và tối ưu
                         hóa sức khỏe theo quy luật tự nhiên
                       </p>
                       <Button
+                        size="lg"
                         className="w-full"
                         variant={recommendedPackage.primary === "tuong-so" ? "default" : "outline"}
+                        onClick={() => handlePackageClick(3)}
                       >
                         Chọn gói này
                       </Button>
                     </div>
-                  </div>
+                  </Card>
                 </div>
               </CardContent>
             </Card>
@@ -703,7 +710,10 @@ function DiagnosisContent() {
             setShowPaymentModal(false)
             setSelectedPackage(null)
           }}
-          selectedPackage={selectedPackage}
+          packageNumber={selectedPackage}
+          upper={upper}
+          lower={lower}
+          moving={moving}
         />
       )}
     </div>

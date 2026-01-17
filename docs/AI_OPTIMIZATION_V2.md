@@ -13,12 +13,12 @@ Phiên bản 2 tập trung vào **semantic optimization** - tối ưu theo ý ng
 ### Giải pháp mới:
 **Chia knowledge thành các modules:**
 
-```
+\`\`\`
 ├── Core Logic (luôn gửi)          ~500 tokens
 ├── 8 Quẻ thuần (chọn lọc)         ~200 tokens/quẻ
 ├── Timing Analysis (theo cần)     ~300 tokens
 └── Symptom Specific (chọn lọc)    ~400 tokens/symptom
-```
+\`\`\`
 
 **Cơ chế chọn lọc:**
 1. Luôn gửi: Core Logic
@@ -46,7 +46,7 @@ Phiên bản 2 tập trung vào **semantic optimization** - tối ưu theo ý ng
 
 #### Layer 2: Semantic Response Cache (24 giờ)
 **Cơ chế:**
-```typescript
+\`\`\`typescript
 // Normalize triệu chứng
 "Tôi bị đau mắt quá" → "đau mắt"
 "đau mắt!!" → "đau mắt"
@@ -58,7 +58,7 @@ MD5(upperTrigram + lowerTrigram + movingLine + normalizedConcern + transformed..
 - "Tôi bị đau mắt" + Quẻ 43, Hào 1
 - "đau mắt quá!!!" + Quẻ 43, Hào 1
 → Trả về cùng 1 response (không gọi AI)
-```
+\`\`\`
 
 **Kết quả:**
 - Request trùng lặp (20-30%): **KHÔNG** tốn token
@@ -73,9 +73,9 @@ MD5(upperTrigram + lowerTrigram + movingLine + normalizedConcern + transformed..
 ### Giải pháp mới:
 **Giảm xuống 800 tokens + enforce format:**
 
-```
+\`\`\`
 6 sections × ~100 từ/section = 600 từ ≈ 800 tokens
-```
+\`\`\`
 
 **Lợi ích:**
 - Giảm 33% output cost
@@ -104,7 +104,7 @@ MD5(upperTrigram + lowerTrigram + movingLine + normalizedConcern + transformed..
 ## Monitoring
 
 **Metrics cần theo dõi:**
-```typescript
+\`\`\`typescript
 // Thêm vào response
 {
   cached: true/false,           // hit cache?
@@ -112,7 +112,7 @@ MD5(upperTrigram + lowerTrigram + movingLine + normalizedConcern + transformed..
   knowledgeChunks: string[],    // which chunks loaded
   cacheKey: string              // for debugging
 }
-```
+\`\`\`
 
 ## Lưu ý Production
 

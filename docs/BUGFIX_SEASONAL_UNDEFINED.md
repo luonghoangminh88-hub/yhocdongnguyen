@@ -1,11 +1,11 @@
 # Bug Fix: TypeError - Cannot destructure 'seasonal' as undefined
 
 ## Problem
-```
+\`\`\`
 TypeError: Cannot destructure property 'favorableMonths' of 'seasonal' as it is undefined.
 at generateTiming (...)
 at generateIntelligentFallback (...)
-```
+\`\`\`
 
 ## Root Cause
 Schema mismatch between `performComprehensiveDiagnosis` and `generateIntelligentFallback`:
@@ -16,31 +16,31 @@ Schema mismatch between `performComprehensiveDiagnosis` and `generateIntelligent
 ## Solution Applied
 
 ### 1. Added `seasonalInfluence` to ComprehensiveDiagnosis type
-```typescript
+\`\`\`typescript
 seasonalInfluence: {
   favorableMonths: number[]
   unfavorableMonths: number[]
   currentInfluence: string
   explanation: string
 }
-```
+\`\`\`
 
 ### 2. Implemented month calculation logic
 - `calculateFavorableMonths()`: Returns favorable months based on element's season
 - `calculateUnfavorableMonths()`: Returns unfavorable months when element is weak
 
 ### 3. Added defensive coding in `generateTiming()`
-```typescript
+\`\`\`typescript
 if (!seasonal || typeof seasonal !== "object") {
   return `Chưa đủ dữ liệu để luận thời vận theo tháng...`
 }
 const { favorableMonths = [], unfavorableMonths = [], currentInfluence = "Đang phân tích" } = seasonal
-```
+\`\`\`
 
 ### 4. Added `severityLabel` field
-```typescript
+\`\`\`typescript
 severityLabel: severity === "severe" ? "Nghiêm trọng" : severity === "moderate" ? "Trung bình" : "Nhẹ"
-```
+\`\`\`
 
 ## Impact
 - Eliminates 500 errors when OpenAI API fails or hits rate limit

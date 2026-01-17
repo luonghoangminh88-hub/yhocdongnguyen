@@ -15,7 +15,7 @@ Frontend đang spam `/api/diagnose-ai` endpoint, gây ra:
 ## Giải pháp đã implement
 
 ### 1. Triple Lock System (BẮT BUỘC)
-```typescript
+\`\`\`typescript
 // Lock 1: Request in flight
 if (requestInFlight.current) return
 
@@ -24,20 +24,20 @@ if (hasResult.current && aiInterpretation) return
 
 // Lock 3: Currently loading
 if (isLoadingAI) return
-```
+\`\`\`
 
 ### 2. Handle usedAI=false Correctly (BẮT BUỘC)
-```typescript
+\`\`\`typescript
 if (result.usedAI === false) {
   console.log("[v0] Using fallback - DO NOT retry")
   setAiInterpretation(result) // Use fallback result
   hasResult.current = true     // Mark as complete
   return                       // STOP - don't retry
 }
-```
+\`\`\`
 
 ### 3. Debounce 300ms (BẮT BUỘC)
-```typescript
+\`\`\`typescript
 useEffect(() => {
   const debounceTimer = setTimeout(() => {
     fetchAIInterpretation()
@@ -45,16 +45,16 @@ useEffect(() => {
   
   return () => clearTimeout(debounceTimer)
 }, [useAI, stableDiagnosisKey])
-```
+\`\`\`
 
 ### 4. Reset Flags on Key Change
-```typescript
+\`\`\`typescript
 useEffect(() => {
   requestInFlight.current = false
   hasResult.current = false  // Allow new request for new query
   // ... then call API
 }, [useAI, stableDiagnosisKey])
-```
+\`\`\`
 
 ## Kết quả mong đợi
 - ✅ Mỗi query chỉ gọi API **1 lần duy nhất**

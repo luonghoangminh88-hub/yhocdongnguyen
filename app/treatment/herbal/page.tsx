@@ -9,13 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Leaf, FlaskConical, Clock, AlertTriangle, Info, Utensils, Heart, Download, ChevronRight } from "lucide-react"
 import { getTrigramByNumber } from "@/lib/data/trigram-data"
-import { getHerbalTreatment } from "@/lib/herbal-data"
+import { generateNamDuocPrescription, type NamDuocPrescription } from "@/lib/herbal-data-nam-duoc"
 import { GatedContentWrapper } from "@/components/gated-content-wrapper"
 import { PaymentModal } from "@/components/payment-modal"
 
 function HerbalContent() {
   const searchParams = useSearchParams()
-  const [treatment, setTreatment] = useState<ReturnType<typeof getHerbalTreatment> | null>(null)
+  const [prescription, setPrescription] = useState<NamDuocPrescription | null>(null)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
   const upper = Number.parseInt(searchParams.get("upper") || "1")
@@ -23,8 +23,8 @@ function HerbalContent() {
   const moving = Number.parseInt(searchParams.get("moving") || "1")
 
   useEffect(() => {
-    const result = getHerbalTreatment(upper, lower, moving)
-    setTreatment(result)
+    const result = generateNamDuocPrescription(upper, lower, moving)
+    setPrescription(result)
   }, [upper, lower, moving])
 
   const upperTrigram = getTrigramByNumber(upper)
@@ -32,11 +32,9 @@ function HerbalContent() {
 
   const hexagramName = `${upperTrigram.vietnamese} ${lowerTrigram.vietnamese}`
 
-  if (!treatment) {
+  if (!prescription) {
     return <div className="text-center py-12">Đang tải...</div>
   }
-
-  const prescription = treatment.primaryPrescription
 
   return (
     <>
@@ -52,8 +50,8 @@ function HerbalContent() {
             <div className="container mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-foreground">Gói 2: Phương Thang Tính Vị</h1>
-                  <p className="text-sm text-muted-foreground mt-1">Bài thuốc từ Nam Dược Thần Hiệu</p>
+                  <h1 className="text-3xl font-bold tracking-tight text-foreground">Gói 2: Nam Dược Thần Hiệu</h1>
+                  <p className="text-sm text-muted-foreground mt-1">Bài thuốc từ Tuệ Tĩnh - Ngũ Hành Điều Hòa</p>
                 </div>
                 <Button variant="outline" onClick={() => (window.location.href = "/")}>
                   Trang chủ
@@ -69,17 +67,17 @@ function HerbalContent() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-foreground">
                     <Info className="w-5 h-5 text-primary" />
-                    Chẩn Đoán
+                    Chẩn Đoán Theo Ngũ Hành
                   </CardTitle>
-                  <CardDescription>{treatment.diagnosis}</CardDescription>
+                  <CardDescription>{prescription.indication}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-3">
                     <Badge variant="secondary">
-                      Thượng: {upperTrigram.vietnamese} ({upperTrigram.element})
+                      Thượng: {upperTrigram.vietnamese} ({upperTrigram.element} - {upperTrigram.organ})
                     </Badge>
                     <Badge variant="secondary">
-                      Hạ: {lowerTrigram.vietnamese} ({lowerTrigram.element})
+                      Hạ: {lowerTrigram.vietnamese} ({lowerTrigram.element} - {lowerTrigram.organ})
                     </Badge>
                   </div>
                 </CardContent>
@@ -94,10 +92,10 @@ function HerbalContent() {
                         <Leaf className="w-6 h-6 text-primary" />
                         {prescription.name}
                       </CardTitle>
-                      <CardDescription className="mt-2">{prescription.description}</CardDescription>
+                      <CardDescription className="mt-2">Theo lý thuyết Ngũ Hành từ Nam Dược Thần Hiệu</CardDescription>
                     </div>
                     <Badge variant="default" className="text-sm">
-                      {prescription.category}
+                      {prescription.formula.length} vị thuốc
                     </Badge>
                   </div>
                 </CardHeader>
@@ -113,36 +111,51 @@ function HerbalContent() {
                     {/* Ingredients Tab */}
                     <TabsContent value="ingredients" className="space-y-4">
                       <div className="space-y-3">
-                        {prescription.ingredients.map((ingredient, idx) => (
+                        {prescription.formula.map((item, idx) => (
                           <div key={idx} className="p-4 bg-secondary/30 rounded-lg border border-border">
                             <div className="flex items-start justify-between mb-2">
-                              <div>
-                                <h4 className="font-semibold text-foreground">{ingredient.name}</h4>
-                                {ingredient.latin && (
-                                  <p className="text-sm text-muted-foreground italic">{ingredient.latin}</p>
-                                )}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h4 className="font-semibold text-foreground">{item.herb.name}</h4>
+                                  <Badge variant="outline" className="text-xs">
+                                    {item.role}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                                  <span>Vị: {item.herb.taste}</span>
+                                  <span>•</span>
+                                  <span>Tính: {item.herb.nature}</span>
+                                  <span>•</span>
+                                  <span>
+                                    {item.herb.element} - {item.herb.organ}
+                                  </span>
+                                </div>
                               </div>
-                              <Badge variant="outline" className="text-sm font-semibold">
-                                {ingredient.amount}
+                              <Badge variant="outline" className="text-sm font-semibold ml-2">
+                                {item.amount}
                               </Badge>
                             </div>
                             <p className="text-sm text-muted-foreground flex items-start gap-2">
                               <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                              {ingredient.effects}
+                              {item.herb.effects}
                             </p>
+                            {item.herb.notes && (
+                              <p className="text-xs text-muted-foreground/80 mt-2 italic pl-6">💡 {item.herb.notes}</p>
+                            )}
                           </div>
                         ))}
                       </div>
 
-                      {prescription.modifications && (
-                        <Alert className="border-accent/50 bg-accent/10">
-                          <Info className="h-4 w-4 text-accent" />
-                          <AlertDescription className="ml-2">
-                            <p className="font-semibold text-foreground mb-1">Gia giảm:</p>
-                            <p className="text-sm text-muted-foreground">{prescription.modifications}</p>
-                          </AlertDescription>
-                        </Alert>
-                      )}
+                      <Alert className="border-accent/50 bg-accent/10">
+                        <Info className="h-4 w-4 text-accent" />
+                        <AlertDescription className="ml-2">
+                          <p className="font-semibold text-foreground mb-1">Thuyết minh bài thuốc:</p>
+                          <p className="text-sm text-muted-foreground">
+                            Bài thuốc này được xây dựng theo nguyên tắc Quân-Thần-Tá-Sứ trong Y học cổ truyền, kết hợp
+                            lý thuyết Ngũ Hành tương sinh tương khắc để điều hòa âm dương trong cơ thể.
+                          </p>
+                        </AlertDescription>
+                      </Alert>
                     </TabsContent>
 
                     {/* Preparation Tab */}
@@ -225,7 +238,8 @@ function HerbalContent() {
                       <Alert className="border-primary/50 bg-primary/10">
                         <Info className="h-4 w-4 text-primary" />
                         <AlertDescription className="ml-2 text-sm text-muted-foreground">
-                          Nếu sau 2 tuần không thấy cải thiện, nên tái khám để điều chỉnh phương thuốc phù hợp hơn.
+                          Nếu sau 2 tuần không thấy cải thiện, nên tái khám để điều chỉnh phương thuốc phù hợp hơn theo
+                          thể trạng cụ thể.
                         </AlertDescription>
                       </Alert>
                     </TabsContent>
@@ -235,14 +249,22 @@ function HerbalContent() {
                       <Alert className="border-destructive/50 bg-destructive/10">
                         <AlertTriangle className="h-5 w-5 text-destructive" />
                         <AlertDescription className="ml-2">
-                          <p className="font-semibold text-foreground mb-2">Chống chỉ định:</p>
+                          <p className="font-semibold text-foreground mb-2">Cảnh báo quan trọng:</p>
                           <ul className="space-y-1 text-sm text-muted-foreground">
-                            {prescription.contraindications.map((item, idx) => (
-                              <li key={idx} className="flex items-start gap-2">
-                                <span className="text-destructive mt-0.5">•</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
+                            <li className="flex items-start gap-2">
+                              <span className="text-destructive mt-0.5">•</span>
+                              <span>Phụ nữ có thai và cho con bú nên tham khảo thầy thuốc trước khi dùng</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-destructive mt-0.5">•</span>
+                              <span>Người bị cảm mạo, sốt cao không nên dùng thuốc bổ</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-destructive mt-0.5">•</span>
+                              <span>
+                                Nếu có phản ứng bất thường (phát ban, buồn nôn), ngừng ngay và liên hệ thầy thuốc
+                              </span>
+                            </li>
                           </ul>
                         </AlertDescription>
                       </Alert>
@@ -253,16 +275,16 @@ function HerbalContent() {
                         </CardHeader>
                         <CardContent className="space-y-3 text-sm text-muted-foreground">
                           <p className="leading-relaxed">
-                            Bài thuốc này chỉ mang tính chất tham khảo. Nên tham khảo ý kiến thầy thuốc Đông y có chuyên
-                            môn trước khi sử dụng.
+                            Bài thuốc này được xây dựng dựa trên lý thuyết Ngũ Hành và chẩn đoán Mai Hoa, chỉ mang tính
+                            chất tham khảo. Nên tham khảo ý kiến thầy thuốc Đông y có chuyên môn trước khi sử dụng.
                           </p>
                           <p className="leading-relaxed">
                             Mỗi cơ địa khác nhau cần phương thuốc điều chỉnh phù hợp. Không tự ý thay đổi liều lượng
                             hoặc vị thuốc.
                           </p>
                           <p className="leading-relaxed">
-                            Nếu xuất hiện triệu chứng bất thường khi dùng thuốc (phát ban, ngứa, buồn nôn...), ngừng
-                            ngay và liên hệ thầy thuốc.
+                            Bài thuốc được trích dẫn từ "Nam Dược Thần Hiệu" (Tuệ Tĩnh, 1883), một trong những tài liệu
+                            quý giá của y học cổ truyền Việt Nam.
                           </p>
                         </CardContent>
                       </Card>
@@ -271,33 +293,7 @@ function HerbalContent() {
                 </CardContent>
               </Card>
 
-              {/* Alternative Prescriptions */}
-              {treatment.alternativePrescriptions.length > 0 && (
-                <Card className="border-border/50 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-foreground">Phương Thuốc Thay Thế</CardTitle>
-                    <CardDescription>Có thể sử dụng thay cho phương chính nếu phù hợp</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {treatment.alternativePrescriptions.map((altPrescription, idx) => (
-                      <div key={idx} className="p-4 bg-secondary/20 rounded-lg border border-border">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h4 className="font-semibold text-foreground">{altPrescription.name}</h4>
-                            <p className="text-sm text-muted-foreground mt-1">{altPrescription.description}</p>
-                          </div>
-                          <Badge variant="outline">{altPrescription.category}</Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          {altPrescription.ingredients.length} vị thuốc
-                        </p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Dietary Advice */}
+              {/* Dietary Advice & Lifestyle */}
               <div className="grid md:grid-cols-2 gap-6">
                 <Card className="border-border/50 shadow-lg">
                   <CardHeader>
@@ -309,12 +305,22 @@ function HerbalContent() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {treatment.dietaryAdvice.map((advice, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span>{advice}</span>
-                        </li>
-                      ))}
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Ăn nhiều ngũ cốc nguyên hạt, rau xanh và trái cây</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Hạn chế thức ăn cay nóng, dầu mỡ, đồ chiên rán</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Tránh rượu bia, chất kích thích</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Ăn đúng giờ, không ăn quá no hoặc quá đói</span>
+                      </li>
                     </ul>
                   </CardContent>
                 </Card>
@@ -329,12 +335,22 @@ function HerbalContent() {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {treatment.lifestyle.map((lifestyle, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span>{lifestyle}</span>
-                        </li>
-                      ))}
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Ngủ đủ 7-8 giờ mỗi đêm, không thức khuya</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Tập thể dục nhẹ nhàng như thái cực, khí công</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Tránh căng thẳng, lo lắng kéo dài</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <ChevronRight className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span>Giữ ấm cơ thể, tránh gió lạnh</span>
+                      </li>
                     </ul>
                   </CardContent>
                 </Card>
@@ -360,11 +376,11 @@ function HerbalContent() {
               <Card className="border-border/50 bg-muted/30">
                 <CardContent className="pt-6">
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    <strong className="text-foreground">Dẫn chứng tài liệu:</strong> Các phương thuốc trích dẫn từ "Nam
-                    Dược Thần Hiệu" (Tuệ Tĩnh, 1883), "Hải Thượng Y Tông Tâm Lĩnh" (Lê Hữu Trác), và "Y Học Cổ Truyền
-                    Việt Nam" (Viện Y Học Cổ Truyền). Lý thuyết Tạng Phủ và Ngũ Hành dựa trên "Hoàng Đế Nội Kinh" và
-                    "Thương Hàn Luận" (Trương Trọng Cảnh). Các phương thuốc đã được sử dụng trong y học cổ truyền hàng
-                    trăm năm với hiệu quả được ghi nhận.
+                    <strong className="text-foreground">Dẫn chứng tài liệu:</strong> Các vị thuốc và bài thuốc trích dẫn
+                    từ "Nam Dược Thần Hiệu" (Tuệ Tĩnh, 1883) - một trong những tài liệu y học cổ truyền quý giá của Việt
+                    Nam. Lý thuyết Ngũ Hành và Tạng Phủ dựa trên "Hoàng Đế Nội Kinh" kết hợp với kinh nghiệm lâm sàng
+                    hàng trăm năm. Hệ thống phân loại thuốc theo vị (mặn, chua, cay, đắng, ngọt) và tính (hàn, lương,
+                    bình, ôn, nóng) giúp điều hòa âm dương trong cơ thể.
                   </p>
                 </CardContent>
               </Card>

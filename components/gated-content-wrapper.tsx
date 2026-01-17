@@ -136,7 +136,7 @@ export function GatedContentWrapper({
   if (!hasAccess) {
     const PACKAGE_INFO = {
       1: { name: "Gói Khai Huyệt", price: "299.000đ" },
-      2: { name: "Gói Dùng Thuốc", price: "199.000đ" },
+      2: { name: "Gói Nam Dược", price: "199.000đ" },
       3: { name: "Gói Tượng Số", price: "99.000đ" },
     }
 
