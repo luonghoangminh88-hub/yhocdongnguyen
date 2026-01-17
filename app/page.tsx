@@ -31,6 +31,7 @@ import { QuickAuthModal } from "@/components/quick-auth-modal"
 import { canUserDivine, saveDivinationRecord } from "@/lib/actions/divination-actions"
 import { useAuth } from "@/lib/auth/use-auth"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getCurrentUser } from "@/lib/actions/auth-actions"
 
 interface TimeInput {
   year: number
@@ -180,10 +181,35 @@ export default function MainPage() {
   const { user } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
 
-  const handleAuthModalClose = async () => {
-    setAuthModalOpen(false)
-    // Refresh the page to get updated user state
-    window.location.reload()
+  const handleAuthModalClose = async (open: boolean) => {
+    setAuthModalOpen(open)
+
+    if (!open) {
+      // Check if there's pending navigation data in sessionStorage
+      const pendingNav = sessionStorage.getItem("pendingNavigation")
+
+      if (pendingNav) {
+        const navData = JSON.parse(pendingNav)
+        sessionStorage.removeItem("pendingNavigation")
+
+        // Wait a bit for auth state to update
+        await new Promise((resolve) => setTimeout(resolve, 500))
+
+        // Check if user is now logged in (reload auth)
+        const currentUser = await getCurrentUser()
+
+        if (currentUser) {
+          // User is logged in, navigate with saved data
+          router.push(navData.url)
+        } else {
+          // User cancelled login, just reload to refresh state
+          window.location.reload()
+        }
+      } else {
+        // No pending navigation, just reload
+        window.location.reload()
+      }
+    }
   }
 
   const [input, setInput] = useState<TimeInput>({
@@ -320,17 +346,29 @@ export default function MainPage() {
 
     if (!user) {
       console.log("[v0] Opening auth modal")
-      setAuthModalOpen(true) // Use the state variable name
+      if (result) {
+        const navigationData = {
+          url:
+            divinationMethod === "time"
+              ? `/diagnosis?upper=${result.upperTrigram}&lower=${result.lowerTrigram}&moving=${result.movingLine}&healthConcern=${encodeURIComponent(healthConcern)}&year=${input.year}&month=${input.month}&day=${input.day}&hour=${input.hour}&minute=${input.minute}&method=time&gender=${gender}&age=${age}&painLocation=${painLocation}&location=${userLocation}`
+              : `/diagnosis?upper=${result.upperTrigram}&lower=${result.lowerTrigram}&moving=${result.movingLine}&healthConcern=${encodeURIComponent(healthConcern)}&method=manual&gender=${gender}&age=${age}&painLocation=${painLocation}&location=${userLocation}`,
+          formData: {
+            healthConcern,
+            gender,
+            age,
+            painLocation,
+            userLocation,
+            result,
+            divinationMethod,
+            input,
+          },
+        }
+        sessionStorage.setItem("pendingNavigation", JSON.stringify(navigationData))
+      }
+      setAuthModalOpen(true)
       return
     }
 
-    if (!result) {
-      console.log("[v0] No result - showing alert")
-      alert("Vui lòng khởi quẻ trước")
-      return
-    }
-
-    console.log("[v0] Checking divination permission for:", healthConcern)
     // Comprehensive check theo nguyên tắc Mai Hoa
     const checkResult = await canUserDivine(healthConcern)
     console.log("[v0] Permission check result:", checkResult)
