@@ -30,6 +30,7 @@ export type Solution = {
   details: any // JSONB field
   is_premium: boolean
   price?: number
+  hexagram_analysis?: string // Phân tích chi tiết từ quẻ đến bài thuốc
   created_at: string
 }
 

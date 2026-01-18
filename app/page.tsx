@@ -15,6 +15,7 @@ import { HexagramSVG } from "@/components/hexagram-svg"
 import { UserNav } from "@/components/user-nav"
 import { QuickAuthModal } from "@/components/quick-auth-modal"
 import { MaiHoaGuardrailModal } from "@/components/mai-hoa-guardrail-modal"
+import { AppHeader } from "@/components/app-header"
 import { PersonalInfoFields } from "@/components/divination/personal-info-fields"
 import { TimeInputFields } from "@/components/divination/time-input-fields"
 import { NumberInputFields } from "@/components/divination/number-input-fields"
@@ -423,27 +424,7 @@ export default function MainPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-secondary/5 to-background">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 md:h-16 items-center justify-between px-4 mx-auto max-w-7xl">
-          <div className="flex items-center gap-2">
-            <div className="accent-border-left">
-              <h1 className="text-base md:text-xl font-bold">Y Dịch Đồng Nguyên</h1>
-              <p className="text-[10px] md:text-xs text-muted-foreground hidden sm:block">梅花易数 • Mai Hoa Dịch Số</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 md:gap-3">
-            <Button variant="ghost" size="sm" onClick={() => router.push("/services")} className="hidden md:flex">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Gói dịch vụ
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => router.push("/learn")} className="hidden md:flex">
-              <BookOpen className="w-4 h-4 mr-2" />
-              Tìm hiểu
-            </Button>
-            <UserNav />
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <section className="relative py-12 md:py-16 lg:py-24 px-4 overflow-hidden">
         <div className="hero-pattern" />

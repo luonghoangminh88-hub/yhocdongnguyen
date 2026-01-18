@@ -4,26 +4,26 @@ export function parseMarkdown(text: string): string {
 
   let html = text
 
-  // Convert **bold** to <strong>
-  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+  // Convert **bold** to <strong> with styling (non-greedy, works across lines)
+  html = html.replace(/\*\*([^\*]+?)\*\*/gs, "<strong class='text-amber-900 dark:text-amber-100 font-semibold'>$1</strong>")
 
   // Convert numbered lists (1. 2. 3.) to <ol><li>
   const numberedListRegex = /^(\d+)\.\s+(.+)$/gm
   if (numberedListRegex.test(html)) {
     html = html.replace(/^(\d+)\.\s+(.+)$/gm, "<li>$2</li>")
-    html = html.replace(/(<li>.*<\/li>)/s, "<ol class='list-decimal list-inside space-y-2 ml-2'>$1</ol>")
+    html = html.replace(/(<li>.*<\/li>)/s, "<ol class='list-decimal list-inside space-y-2 ml-4'>$1</ol>")
   }
 
   // Convert bullet lists (• or -) to <ul><li>
   const bulletListRegex = /^[•-]\s+(.+)$/gm
   if (bulletListRegex.test(html)) {
     html = html.replace(/^[•-]\s+(.+)$/gm, "<li>$1</li>")
-    html = html.replace(/(<li>.*<\/li>)/s, "<ul class='list-disc list-inside space-y-2 ml-2'>$1</ul>")
+    html = html.replace(/(<li>.*<\/li>)/s, "<ul class='list-disc list-inside space-y-2 ml-4'>$1</ul>")
   }
 
-  // Convert line breaks
-  html = html.replace(/\n\n/g, "</p><p class='mt-4'>")
-  html = `<p>${html}</p>`
+  // Convert line breaks to paragraphs with spacing
+  html = html.replace(/\n\n+/g, "</p><p class='mt-3'>")
+  html = `<p class='text-muted-foreground'>${html}</p>`
 
   return html
 }

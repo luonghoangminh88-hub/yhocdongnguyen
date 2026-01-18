@@ -90,30 +90,49 @@ Phân tích ngắn gọn theo 6 phần, mỗi phần 50-80 từ:
 }
 
 async function generateTextWithOpenAI(systemPrompt: string, userPrompt: string): Promise<string> {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY || ""}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      temperature: 0.5, // Giảm từ 0.7 -> 0.5 để response nhanh hơn, ít sáng tạo hơn
-      max_tokens: 500, // Giảm từ 800 -> 500 để tiết kiệm thời gian
-    }),
-  })
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 seconds timeout
 
-  if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`OpenAI API error: ${response.statusText} - ${errorText}`)
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY || ""}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.5,
+        max_tokens: 500,
+      }),
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`OpenAI API error: ${response.statusText} - ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data.choices[0]?.message?.content || ""
+  } catch (error) {
+    clearTimeout(timeoutId)
+    
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        console.error("[v0] OpenAI request timeout after 15s")
+        throw new Error("AI request timed out")
+      }
+      console.error("[v0] OpenAI fetch error:", error.message)
+    }
+    throw error
   }
-
-  const data = await response.json()
-  return data.choices[0]?.message?.content || ""
 }
 
 const requestTracker = new Map<string, { count: number; resetTime: number }>()
@@ -167,8 +186,12 @@ function getTrigmramNameFromNumber(num: number): string {
 }
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  
   try {
     const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown"
+    console.log(`[v0] Diagnosis request from IP: ${ip}`)
+    
     const rateLimitResult = checkRateLimit(ip)
 
     if (!rateLimitResult.allowed) {
@@ -381,12 +404,30 @@ ${relevantKnowledge}`
       return NextResponse.json(fallbackResult)
     }
   } catch (error) {
-    console.error("[v0] API error:", error)
+    const duration = Date.now() - startTime
+    console.error(`[v0] API error after ${duration}ms:`, error)
+    
+    // Handle specific error types
+    if (error instanceof Error) {
+      if (error.message.includes('timeout') || error.message.includes('ECONNRESET')) {
+        return NextResponse.json(
+          {
+            error: "Kết nối AI bị gián đoạn",
+            details: "Vui lòng thử lại hoặc tắt chế độ AI để xem kết quả cơ bản",
+            status: "connection_error",
+            fallback: true,
+          },
+          { status: 503 },
+        )
+      }
+    }
+    
     return NextResponse.json(
       {
         error: "Không thể tạo kết quả chẩn đoán",
         details: error instanceof Error ? error.message : "Lỗi không xác định",
         status: "error",
+        fallback: true,
       },
       { status: 500 },
     )

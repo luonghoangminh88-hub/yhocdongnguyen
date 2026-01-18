@@ -34,8 +34,15 @@ export async function getTimoPaymentMethod() {
 /**
  * Create a new deposit for Timo payment
  */
-export async function createTimoDeposit(params: { solutionId: string; amount: number }) {
+export async function createTimoDeposit(params: { 
+  solutionId: string | null
+  amount: number
+  packageType?: string
+  hexagramKey?: string
+}) {
   const supabase = await getSupabaseServerClient()
+
+  console.log("[v0] createTimoDeposit params:", params)
 
   // Check authentication
   const {
@@ -59,19 +66,38 @@ export async function createTimoDeposit(params: { solutionId: string; amount: nu
     return { error: validation.error }
   }
 
-  // Check if solution exists and verify price matches
-  const { data: solution, error: solutionError } = await supabase
-    .from("solutions")
-    .select("*")
-    .eq("id", params.solutionId)
-    .single()
+  // If solution_id is provided (prescription packages), verify it exists and price matches
+  if (params.solutionId) {
+    console.log("[v0] Verifying solution_id:", params.solutionId)
+    const { data: solution, error: solutionError } = await supabase
+      .from("solutions")
+      .select("*")
+      .eq("id", params.solutionId)
+      .single()
 
-  if (solutionError || !solution) {
-    return { error: "Không tìm thấy giải pháp" }
-  }
+    if (solutionError) {
+      console.log("[v0] Solution query error:", solutionError)
+      return { error: "Không tìm thấy giải pháp" }
+    }
 
-  if (solution.unlock_cost !== params.amount) {
-    return { error: `Giá gói này là ${solution.unlock_cost.toLocaleString("vi-VN")}đ` }
+    if (!solution) {
+      console.log("[v0] Solution not found for id:", params.solutionId)
+      return { error: "Không tìm thấy giải pháp" }
+    }
+
+    console.log("[v0] Solution found:", { 
+      id: solution.id, 
+      unlock_cost: solution.unlock_cost, 
+      requested_amount: params.amount 
+    })
+
+    if (solution.unlock_cost !== params.amount) {
+      console.log("[v0] Price mismatch:", { 
+        solution_price: solution.unlock_cost, 
+        requested_price: params.amount 
+      })
+      return { error: `Giá gói này là ${solution.unlock_cost.toLocaleString("vi-VN")}đ` }
+    }
   }
 
   // Create deposit data
@@ -93,10 +119,17 @@ export async function createTimoDeposit(params: { solutionId: string; amount: nu
     return { error: "Không thể tạo giao dịch nạp tiền" }
   }
 
-  // Store solution_id in metadata for later access granting
+  // Store metadata for later access granting
+  const metadata = {
+    ...deposit.payment_data,
+    solution_id: params.solutionId,
+    package_type: params.packageType,
+    hexagram_key: params.hexagramKey,
+  }
+
   await supabase
     .from("deposits")
-    .update({ payment_data: { ...deposit.payment_data, solution_id: params.solutionId } })
+    .update({ payment_data: metadata })
     .eq("id", deposit.id)
 
   return { deposit: deposit as TimoDeposit, paymentMethod }

@@ -47,6 +47,14 @@ export function GatedContentWrapper({
 
       setIsAuthenticated(true)
 
+      // Step 1.5: ADMIN BYPASS - Grant immediate access if user is admin
+      if (user.is_admin) {
+        console.log("[v0] Admin user detected - granting immediate access to gated content")
+        setHasAccess(true)
+        setIsLoading(false)
+        return
+      }
+
       // Step 2: Get solution ID for this hexagram and type
       const { solutions } = await getSolutionsByHexagram(hexagram)
 

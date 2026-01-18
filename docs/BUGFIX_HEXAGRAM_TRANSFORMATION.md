@@ -9,25 +9,25 @@ Người dùng báo cáo rằng kết quả chẩn đoán từ quẻ **Tốn Vi 
 ### 1. KIỂM TRA TÍNH TOÁN QUẺ BIẾN
 
 #### Quẻ ban đầu: Tốn Vi Phong (巽为风) - Quẻ 57
-```
+\`\`\`
 Thượng: Tốn (5) = ☴ (⚋⚋⚊)  <- Hào 6, 5, 4
 Hạ: Tốn (5) = ☴ (⚋⚋⚊)     <- Hào 3, 2, 1
-```
+\`\`\`
 
 #### Hào 5 động
 - Hào 5 = Hào thứ 2 trong Thượng quẻ (đếm từ dưới lên)
 - Tốn (⚋⚋⚊) → Đổi hào 2 → (⚋⚊⚊) = Cấn (7)
 
 #### Quẻ biến: Sơn Phong Cổ (山风蛊) - Quẻ 18
-```
+\`\`\`
 Thượng: Cấn (7) = ☶ (⚊⚋⚊)
 Hạ: Tốn (5) = ☴ (⚋⚋⚊)
-```
+\`\`\`
 
 **KẾT LUẬN:** Logic tính toán quẻ biến trong code HOÀN TOÀN CHÍNH XÁC ✅
 
 File: `/app/diagnosis/page.tsx` dòng 95-130
-```typescript
+\`\`\`typescript
 const calculateTransformedHexagram = () => {
   // Logic đúng: Đổi hào động trong trigram tương ứng
   if (isLowerMoving) { // Hào 1-3
@@ -36,7 +36,7 @@ const calculateTransformedHexagram = () => {
     // Đổi hào trong Thượng quẻ
   }
 }
-```
+\`\`\`
 
 ### 2. PHÂN TÍCH CÁC LỖI THỰC TẾ
 
@@ -48,7 +48,7 @@ const calculateTransformedHexagram = () => {
 - AI bỏ qua ý nghĩa **BIẾN ĐỔI XẤU ĐI** từ Tỷ Hòa → Xung Khắc
 
 **Phân tích quan hệ Ngũ Hành:**
-```
+\`\`\`
 Quẻ ban đầu (本卦):
 - Thượng: Tốn (Mộc) - Thể quẻ
 - Hạ: Tốn (Mộc) - Dụng quẻ
@@ -58,7 +58,7 @@ Quẻ biến (变卦):
 - Thượng: Cấn (Thổ) - Thể quẻ
 - Hạ: Tốn (Mộc) - Dụng quẻ  
 → Mộc khắc Thổ = Dụng khắc Thể (Hung) ❌❌❌
-```
+\`\`\`
 
 **Nghĩa lâm sàng:**
 - Ban đầu: Gan (Mộc) cân bằng → Bệnh nhẹ
@@ -73,13 +73,13 @@ Quẻ biến (变卦):
 - Cần "chấn cổ" = Rung động mạnh để đào thải độc tố
 
 **Lời khuyên đúng:**
-```
+\`\`\`
 Quẻ Cổ chỉ ra:
 1. Bệnh không phải do nguyên nhân bên ngoài đột ngột
 2. Bệnh do tích tụ lâu ngày (stress, lo âu, thói quen xấu)
 3. Cần điều trị tận gốc, không phải chỉ triệu chứng
 4. Phải thay đổi lối sống, không chỉ uống thuốc
-```
+\`\`\`
 
 #### Lỗi 3: Nhầm Lẫn Phương Pháp Luận ❌
 
@@ -101,7 +101,7 @@ AI đang trộn lẫn:
 
 Thêm phần cảnh báo:
 
-```markdown
+\`\`\`markdown
 ## NGUYÊN TẮC QUAN TRỌNG KHI PHÂN TÍCH QUẺ BIẾN
 
 ### 1. Quẻ Biến Là Kết Quả Cuối Cùng
@@ -128,14 +128,14 @@ Khi Quẻ Thể là Thổ (Cấn/Khôn) và Quẻ Dụng là Mộc (Chấn/Tốn
 ### 3. Phân Tích Xu Hướng Biến Đổi
 
 Khi Quẻ biến xấu đi so với Quẻ ban đầu:
-```
+\`\`\`
 Tỷ Hòa → Xung Khắc = Bệnh sẽ nặng thêm
 Dụng sinh Thể → Thể khắc Dụng = Tốn kém sức lực
 Thể khắc Dụng → Dụng khắc Thể = Từ kiểm soát được → Mất kiểm soát
-```
+\`\`\`
 
 **BẮT BUỘC phải cảnh báo người bệnh về xu hướng xấu đi!**
-```
+\`\`\`
 
 ### Cấp 2: Cập nhật Logic Phân Tích Trong Code
 
@@ -143,7 +143,7 @@ Thể khắc Dụng → Dụng khắc Thể = Từ kiểm soát được → M�
 
 Thêm hàm phân tích xu hướng:
 
-```typescript
+\`\`\`typescript
 export function analyzeTrend(
   originalRelationship: string, // Quan hệ Thể-Dụng ban đầu
   transformedRelationship: string, // Quan hệ Thể-Dụng sau biến
@@ -194,7 +194,7 @@ export function analyzeTrend(
     advice: "Bệnh có xu hướng tốt lên. Duy trì điều trị hiện tại.",
   }
 }
-```
+\`\`\`
 
 ### Cấp 3: Hiển thị Rõ Ràng Trên UI
 
@@ -202,7 +202,7 @@ export function analyzeTrend(
 
 Thêm section cảnh báo:
 
-```tsx
+\`\`\`tsx
 {trend === "worsening" && (
   <Alert variant="destructive" className="mt-4">
     <AlertTriangle className="h-5 w-5" />
@@ -212,7 +212,7 @@ Thêm section cảnh báo:
     </AlertDescription>
   </Alert>
 )}
-```
+\`\`\`
 
 ## KẾT LUẬN
 

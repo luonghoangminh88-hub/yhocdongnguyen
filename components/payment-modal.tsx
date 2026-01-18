@@ -98,20 +98,22 @@ export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, mov
       let solution = null
 
       if (packageInfo.solutionType === "prescription") {
-        // Get solution from database for Nam Dược
+        // Strategy 1: Try exact hexagram key (with specific moving line)
+        console.log("[v0] Strategy 1 - Searching for exact hexagram key:", hexagramKey)
         let { solutions, error: solutionError } = await getSolutionsByHexagramKey(hexagramKey)
 
+        // Strategy 2: If not found, fallback to base hexagram (moving=0)
+        // Convention: _0 is the base prescription for each hexagram
         if (!solutions || solutions.length === 0) {
-          const upperTrigram = getTrigramByNumber(upper)
-          const lowerTrigram = getTrigramByNumber(lower)
-          const hexagramName = `${upperTrigram.vietnamese} ${lowerTrigram.vietnamese}`
-
-          const oldFormatResult = await getSolutionsByHexagram(hexagramName)
-          solutions = oldFormatResult.solutions
-          solutionError = oldFormatResult.error
+          const baseHexagramKey = `${upper}_${lower}_0`
+          console.log("[v0] Strategy 2 - Exact match not found, trying base hexagram (moving=0):", baseHexagramKey)
+          const baseResult = await getSolutionsByHexagramKey(baseHexagramKey)
+          solutions = baseResult.solutions
+          solutionError = baseResult.error
         }
 
         if (solutionError || !solutions || solutions.length === 0) {
+          console.log("[v0] No prescription found after both strategies")
           setError("Không tìm thấy bài thuốc Nam Dược cho quẻ này")
           setIsCreating(false)
           return
@@ -120,10 +122,13 @@ export function PaymentModal({ isOpen, onClose, packageNumber, upper, lower, mov
         solution = solutions.find((s) => s.solution_type === packageInfo.solutionType)
 
         if (!solution) {
+          console.log("[v0] Solutions found but no prescription type:", solutions)
           setError(`Không tìm thấy ${packageInfo.name} cho quẻ này`)
           setIsCreating(false)
           return
         }
+
+        console.log("[v0] Found prescription solution:", solution.id)
       }
 
       // Create Timo deposit

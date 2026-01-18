@@ -95,6 +95,13 @@ export function getTrigramByNumber(num: number): TrigramData {
   return trigramKey ? TRIGRAMS[trigramKey] : TRIGRAMS.Khon
 }
 
+export function getTrigramByName(vietnameseName: string): TrigramData | null {
+  const trigramKey = Object.keys(TRIGRAMS).find(
+    (key) => TRIGRAMS[key].vietnamese === vietnameseName
+  )
+  return trigramKey ? TRIGRAMS[trigramKey] : null
+}
+
 export const HEXAGRAM_NAMES: Record<string, string> = {
   "1-1": "Càn Thiên",
   "1-2": "Càn Đoài",

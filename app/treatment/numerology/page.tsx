@@ -39,8 +39,49 @@ function NumerologyContent() {
   const sequence = treatment.primarySequence
 
   const handlePlayAudio = () => {
+    if (!('speechSynthesis' in window)) {
+      alert('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản')
+      return
+    }
+
     setIsPlaying(true)
-    setTimeout(() => setIsPlaying(false), 3000)
+    
+    // Get the number sequence
+    const numbers = sequence.sequence.split(" ")
+    const numberWords = numbers.map(num => {
+      const map: Record<string, string> = {
+        '0': 'không',
+        '1': 'một',
+        '2': 'hai',
+        '3': 'ba',
+        '4': 'bốn',
+        '5': 'năm',
+        '6': 'sáu',
+        '7': 'bảy',
+        '8': 'tám',
+        '9': 'chín'
+      }
+      return map[num] || num
+    })
+
+    // Create speech
+    const utterance = new SpeechSynthesisUtterance(numberWords.join('... ') + '...')
+    utterance.lang = 'vi-VN'
+    utterance.rate = 0.7 // Slower for meditation
+    utterance.pitch = 1.0
+    utterance.volume = 1.0
+
+    utterance.onend = () => {
+      setIsPlaying(false)
+    }
+
+    utterance.onerror = () => {
+      setIsPlaying(false)
+      alert('Không thể phát âm thanh. Vui lòng thử lại.')
+    }
+
+    window.speechSynthesis.cancel() // Cancel any ongoing speech
+    window.speechSynthesis.speak(utterance)
   }
 
   return (
@@ -123,7 +164,7 @@ function NumerologyContent() {
                               className="w-24 h-24 rounded-2xl flex items-center justify-center text-5xl font-bold shadow-2xl transition-transform group-hover:scale-110"
                               style={{
                                 background: treatment.wallpaperColors.primary,
-                                color: treatment.wallpaperColors.text,
+                                color: '#ffffff', // Always use white text for maximum contrast
                               }}
                             >
                               {num}

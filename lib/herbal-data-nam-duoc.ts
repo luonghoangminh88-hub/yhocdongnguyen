@@ -15,6 +15,7 @@ export interface NamDuocHerb {
 export interface NamDuocPrescription {
   name: string
   indication: string
+  analysis?: string // Phân tích từ quẻ dịch sang bài thuốc
   formula: {
     herb: NamDuocHerb
     amount: string
@@ -317,6 +318,46 @@ const NAM_DUOC_HERBS: Record<string, NamDuocHerb> = {
     effects: "Giải độc, bổ thận, lợi thủy, trị đau lưng, mụn nhọt",
     notes: "Sao cháy để dẫn thuốc vào thận (Thủy thổ hợp hóa)",
   },
+  TH009: {
+    code: "TH009",
+    name: "Hoàng kỳ",
+    taste: "Ngọt",
+    nature: "Ấm",
+    element: "Thổ",
+    organ: "Tỳ",
+    effects: "Bổ khí, thăng dương, cố biểu, trị sa dạ dày, mệt mỏi, đổ mồ hôi",
+    notes: "Vị thuốc hàng đầu để bổ khí, giúp nâng các tạng bị sa",
+  },
+  TH010: {
+    code: "TH010",
+    name: "Nhân sâm",
+    taste: "Ngọt",
+    nature: "Ấm",
+    element: "Thổ",
+    organ: "Tỳ",
+    effects: "Đại bổ nguyên khí, sanh tân, an thần, trị suy nhược, kiệt sức",
+    notes: "Vua của các vị bổ, sinh lực mạnh mẽ nhất",
+  },
+  TH011: {
+    code: "TH011",
+    name: "Bạch truật",
+    taste: "Ngọt/đắng",
+    nature: "Ấm",
+    element: "Thổ",
+    organ: "Tỳ",
+    effects: "Kiện tỳ, táo thấp, cố biểu, an thai, trị tiêu chảy, mệt mỏi",
+    notes: "Thuốc chủ để kiện tỳ, làm khô thấp khí",
+  },
+  TH012: {
+    code: "TH012",
+    name: "Thăng ma",
+    taste: "Cay/ngọt",
+    nature: "Ấm",
+    element: "Thổ",
+    organ: "Tỳ",
+    effects: "Thăng dương, giải biểu, trị đau đầu, sa cơ quan, thoái hóa cột sống",
+    notes: "Giúp nâng thanh khí lên, đẩy thuốc lên đầu",
+  },
 }
 
 // Map hexagram to affected organs and select appropriate herbs
@@ -359,12 +400,60 @@ export function selectHerbsByHexagram(
   }
 }
 
+// Fixed prescription mapping for specific hexagrams (from Nam Duoc database)
+const FIXED_PRESCRIPTIONS: Record<string, NamDuocPrescription> = {
+  "7_8": {
+    name: "Bổ Trung Ích Khí Thang",
+    indication: "Trị sa dạ dày, cơ nhục yếu bủng, khí hư mệt mỏi",
+    analysis: `**Quẻ Sơn Địa Bác** cho thấy sự suy yếu dần của chính khí, mất mát nguyên khí trong người.
+
+**NỘI QUẺ (KHÔN - ĐỊA):** Khí Thể - Tạng Tỵ
+
+Chủ về vận hóa, tiêu hóa trung tiêu. Khôn thuộc Thổ, hợp với Tỳ tạng. Khi suy yếu, chức năng vận hóa không tốt, tiêu mòn chính khí. Trong cơ thể biểu hiện: Tỵ Hư Nhuộc, khí thể bị đình trệ, bụng đầy trướng, ăn uống không ngon.
+
+**NGOẠI QUẺ (CẤN - SƠN):** Khí Thể - Vị (Dạ dày)
+
+Chủ về tiếp thu ẩm thực. Khi Vì khí uất trệ, đình trệ, gây biểu hiện Tỵ Vị Hư Nhuộc, khí thể yếu kém, ăn uống không tiêu, bụng đầy trướng, mệt mỏi.
+
+**KẾT LUẬN:** Quẻ Bác thể hiện tình trạng Tỵ Vị suy yếu dần, mất mát nguyên khí. Người bệnh thường mệt mỏi, ăn uống không ngon miệng, khó tiêu hóa, thậm chí có thể dẫn đến sa dạ dày, sa tử cung. 
+
+**Bổ Trung Ích Khí Thang** được chọn để bổ dưỡng Trung Tiêu (Tỳ Vị), nâng Dương khí bị suy hãm, cải thiện chức năng tiêu hóa và hồi phục nguyên khí cho cơ thể.`,
+    formula: [
+      { herb: NAM_DUOC_HERBS.TH009, amount: "15-20g", role: "Quân" }, // Hoàng kỳ
+      { herb: NAM_DUOC_HERBS.TH010, amount: "10g", role: "Thần" }, // Nhân sâm
+      { herb: NAM_DUOC_HERBS.TH011, amount: "10g", role: "Tá" }, // Bạch truật
+      { herb: NAM_DUOC_HERBS.TH012, amount: "6-9g", role: "Sứ" }, // Thăng ma
+    ],
+    preparation: [
+      "Rửa sạch các vị thuốc, ngâm trong nước lạnh 20-30 phút",
+      "Đun sôi với 800ml nước, sau đó hạ lửa nhỏ",
+      "Sắc trong 35-45 phút đến khi còn 300-350ml",
+      "Lọc bỏ bã, chia làm 2 lần uống",
+    ],
+    dosage: "Uống 150-175ml mỗi lần, sáng và tối sau ăn 30 phút",
+    duration: "Liên tục trong 2-4 tuần, tái khám nếu không cải thiện",
+    precautions: [
+      "Uống sau khi ăn để tránh khó tiêu",
+      "Tránh ăn thực phẩm cay nóng, dầu mỡ trong thời gian dùng thuốc",
+      "Nghỉ ngơi đầy đủ, tránh căng thắng",
+      "Nên tham khảo ý kiến thầy thuốc trước khi dùng",
+    ],
+  },
+}
+
 // Generate prescription based on hexagram and symptoms
 export function generateNamDuocPrescription(
   upperTrigram: number,
   lowerTrigram: number,
   movingLine: number,
 ): NamDuocPrescription {
+  // Check if there's a fixed prescription for this hexagram
+  const hexagramKey = `${upperTrigram}_${lowerTrigram}`
+  if (FIXED_PRESCRIPTIONS[hexagramKey]) {
+    return FIXED_PRESCRIPTIONS[hexagramKey]
+  }
+
+  // Otherwise, use dynamic generation
   const { primaryElement, affectedOrgans, selectedHerbs } = selectHerbsByHexagram(
     upperTrigram,
     lowerTrigram,

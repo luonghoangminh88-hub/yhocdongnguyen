@@ -28,12 +28,18 @@ export async function diagnoseWithAI(
   },
   retryCount = 0,
 ): Promise<AIDiagnosisResult> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 25000) // 25s client timeout
+  
   try {
     const response = await fetch("/api/diagnose-ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (response.status === 429) {
       const data = await response.json()
@@ -47,15 +53,25 @@ export async function diagnoseWithAI(
 
       throw new Error(`Rate limit exceeded. Please try again in ${retryAfter} seconds.`)
     }
+    
+    if (response.status === 503) {
+      const data = await response.json()
+      console.warn("[v0] Service unavailable, using fallback:", data)
+      throw new Error(data.details || "Service temporarily unavailable")
+    }
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.statusText}`)
+      const data = await response.json().catch(() => null)
+      throw new Error(data?.details || `API error: ${response.statusText}`)
     }
 
     return await response.json()
   } catch (error) {
+    clearTimeout(timeoutId)
+    
     console.error("[v0] AI API call failed:", error)
 
+    // Return graceful fallback
     return {
       rawCalculation: performComprehensiveDiagnosis(params),
       aiInterpretation: {

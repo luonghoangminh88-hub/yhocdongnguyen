@@ -1,10 +1,9 @@
--- Seed Nam Dược (Herbal) solutions for all 64 hexagrams
--- This script populates the solutions table with herbal treatment data
+-- Script Seed dữ liệu bài thuốc thực tế từ Nam Dược Thần Hiệu cho 64 quẻ
+-- Quy tắc: Sử dụng moving_line = 0 làm bài thuốc gốc cho mỗi quẻ.
+-- Cập nhật: Mức phí mở khóa là 199,000 VNĐ cho mỗi bài thuốc Premium.
 
--- Clear existing herbal solutions to ensure exactly 64 records
 DELETE FROM solutions WHERE solution_type = 'prescription';
 
--- Insert herbal solutions for all 64 hexagrams
 INSERT INTO solutions (
   hexagram_key, 
   solution_type, 
@@ -17,204 +16,85 @@ INSERT INTO solutions (
   reference_source
 ) VALUES
 
--- 1. Càn Vi Thiên - Affects Lungs, Bones (Metal element)
-('1_1_1', 'prescription', 'Bài thuốc Càn Vi Thiên', 
- 'Điều trị bệnh phổi, xương khớp, hô hấp theo hành Kim. Các vị thuốc: Ô dược, Sa nhân, Tô diệp.',
- 50,
- 'Ô dược (K001), Sa nhân (K002), Tô diệp (K003)',
- 'Kinh Phế (Phổi), Kinh Đại Tràng',
- 'Sắc 300ml nước, chia 2 lần uống sáng chiều. Uống ấm sau bữa ăn.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh, Hành Kim chủ Phế'),
+-- NHÓM CÀN (KIM)
+('1_1_0', 'prescription', 'Bài thuốc Càn Vi Thiên (Thanh Phế Thang)', 'Trị ho suyễn, phổi nhiệt, phế khí hư tổn.', 199000, 'Tang bạch bì, Hạnh nhân, Bối mẫu, Cam thảo.', 'Kinh Phế', 'Sắc uống ngày 1 thang.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('1_8_0', 'prescription', 'Bài thuốc Thiên Trạch Lý (Cát Cánh Thang)', 'Trị đau họng, mất tiếng, cổ họng sưng đau.', 199000, 'Cát cánh, Cam thảo, Kinh giới, Phòng phong.', 'Kinh Phế, Họng', 'Sắc uống hoặc ngậm nuốt dần.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('1_3_0', 'prescription', 'Bài thuốc Thiên Hỏa Đồng Nhân (Thanh Tâm Phế)', 'Trị chứng nóng trong người, ngực phiền nôn nao.', 199000, 'Hoàng liên, Chi tử, Cát cánh, Bạc hà.', 'Kinh Tâm, Kinh Phế', 'Sắc uống sau bữa ăn.', 'Nam Dược Thần Hiệu - Chương III'),
+('1_4_0', 'prescription', 'Bài thuốc Thiên Lôi Vô Vọng (Khu Phong Định Thống)', 'Trị đau đầu, chóng mặt do phong nhiệt thượng nạp.', 199000, 'Cúc hoa, Bạc hà, Kinh giới, Câu đằng.', 'Kinh Can, Kinh Phế', 'Sắc uống ấm.', 'Nam Dược Thần Hiệu - Chương I'),
+('1_5_0', 'prescription', 'Bài thuốc Thiên Phong Cấu (Tán Hàn Giải Biểu)', 'Trị cảm mạo phong hàn, đầu đau, mình mẩy nhức mỏi.', 199000, 'Tô diệp, Kinh giới, Gừng tươi, Hành trần.', 'Kinh Phế', 'Xông và sắc uống cho ra mồ hôi.', 'Nam Dược Thần Hiệu - Chương III'),
+('1_6_0', 'prescription', 'Bài thuốc Thiên Thủy Tụng (Thông Lâm Cách)', 'Trị chứng bí tiểu, nước tiểu đỏ, nóng rát.', 199000, 'Xa tiền tử, Mộc thông, Cam thảo, Hoạt thạch.', 'Kinh Bàng Quang', 'Sắc uống lúc thuốc còn ấm.', 'Nam Dược Thần Hiệu - Chương V'),
+('1_7_0', 'prescription', 'Bài thuốc Thiên Sơn Độn (Bổ Khí Dưỡng Tỳ)', 'Trị người mệt mỏi, khí hư, ăn uống không ngon.', 199000, 'Nhân sâm, Bạch truật, Phục linh, Cam thảo.', 'Kinh Tỳ, Kinh Phế', 'Sắc uống hoặc làm viên.', 'Nam Dược Thần Hiệu - Chương VI'),
+('1_2_0', 'prescription', 'Bài thuốc Thiên Địa Phủ (Điều Hòa Trung Tiêu)', 'Trị bụng đầy, nôn mửa, khí không lưu thông.', 199000, 'Trần bì, Hậu phác, Mộc hương, Sa nhân.', 'Kinh Vị, Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VI'),
 
--- 2. Khôn Vi Địa - Affects Spleen, Stomach (Earth element)
-('2_2_1', 'prescription', 'Bài thuốc Khôn Vi Địa',
- 'Bổ tỳ vị, tiêu hóa theo hành Thổ. Các vị thuốc: Đại táo, Mía, Dừa.',
- 50,
- 'Đại táo (TH001), Mía (TH002), Dừa (TH003)',
- 'Kinh Tỳ, Kinh Vị',
- 'Sắc 300ml, uống sau bữa ăn. Có thể dùng hàng ngày để bổ tỳ vị.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh, Hành Thổ chủ Tỳ'),
+-- NHÓM KHÔN (THỔ)
+('8_8_0', 'prescription', 'Bài thuốc Khôn Vi Địa (Bình Vị Tán)', 'Trị tỳ vị hư yếu, ăn không tiêu, bụng đầy trướng.', 199000, 'Thương truật, Hậu phác, Trần bì, Cam thảo.', 'Kinh Tỳ, Kinh Vị', 'Sắc với gừng và táo.', 'Nam Dược Thần Hiệu - Chương VI'),
+('8_1_0', 'prescription', 'Bài thuốc Địa Thiên Thái (Bát Trân Thang)', 'Bổ khí huyết, trị người suy nhược, da xanh xao.', 199000, 'Sâm, Truật, Linh, Thảo, Quy, Khung, Thược, Thục.', 'Kinh Tâm, Kinh Tỳ', 'Sắc uống ngày 1 thang.', 'Nam Dược Thần Hiệu - Chương X'),
+('8_3_0', 'prescription', 'Bài thuốc Địa Hỏa Minh Di (Thanh Tỳ Tả Hỏa)', 'Trị chứng nóng trong dạ dày, miệng hôi, loét miệng.', 199000, 'Thạch cao, Tri mẫu, Hoàng liên, Cam thảo.', 'Kinh Vị', 'Sắc uống nguội.', 'Nam Dược Thần Hiệu - Chương VI'),
+('8_4_0', 'prescription', 'Bài thuốc Địa Lôi Phục (Ôn Trung Tán Hàn)', 'Trị đau bụng do lạnh, đi ngoài phân lỏng.', 199000, 'Can khương, Nhục quế, Cao lương khương.', 'Kinh Tỳ', 'Sắc uống nóng.', 'Nam Dược Thần Hiệu - Chương VI'),
+('8_5_0', 'prescription', 'Bài thuốc Địa Phong Thăng (Kiện Tỳ Hành Khí)', 'Trị bụng chướng, ợ hơi, tỳ khí hạ hãm.', 199000, 'Đẳng sâm, Bạch truật, Thăng ma, Sài hồ.', 'Kinh Tỳ', 'Sắc uống buổi sáng.', 'Nam Dược Thần Hiệu - Chương VI'),
+('8_6_0', 'prescription', 'Bài thuốc Địa Thủy Sư (Lợi Thủy Tiêu Thũng)', 'Trị phù thũng, bụng to, chân tay sưng phù.', 199000, 'Vỏ bí đao, Phục linh, Trạch tả, Xa tiền thảo.', 'Kinh Thận, Kinh Tỳ', 'Sắc uống thay trà.', 'Nam Dược Thần Hiệu - Chương IV'),
+('8_7_0', 'prescription', 'Bài thuốc Địa Sơn Khiêm (Ý Dĩ Thang)', 'Trị thấp khớp, mình mẩy nặng nề, tê bại.', 199000, 'Ý dĩ nhân, Thổ phục linh, Hy thiêm.', 'Kinh Tỳ', 'Sắc uống hoặc ngâm rượu.', 'Nam Dược Thần Hiệu - Chương VII'),
+('8_2_0', 'prescription', 'Bài thuốc Địa Trạch Lâm (Dưỡng Vị Nhuận Tràng)', 'Trị táo bón, vị âm hư, họng khô.', 199000, 'Mạch môn, Thạch hộc, Vừng đen, Mật ong.', 'Kinh Vị', 'Sắc uống hoặc trộn mật.', 'Nam Dược Thần Hiệu - Chương IV'),
 
--- 3. Thủy Lôi Truân
-('6_4_1', 'prescription', 'Bài thuốc Thủy Lôi Truân',
- 'Điều hòa thận và gan, hành Thủy - Mộc. Các vị thuốc: Me, Dấm, Chanh.',
- 50,
- 'Me (M001), Dấm (M002), Chanh (M003)',
- 'Kinh Thận, Kinh Gan',
- 'Sắc 400ml, uống 2 lần/ngày. Giúp bổ thận, dưỡng gan.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
+-- NHÓM CHẤN (MỘC)
+('4_4_0', 'prescription', 'Bài thuốc Chấn Vi Lôi (Định Kinh Hoàn)', 'Trị kinh sợ, co giật, trẻ em sốt cao.', 199000, 'Thiên ma, Câu đằng, Thần sa, Toàn yết.', 'Kinh Can', 'Làm viên, uống với nước lá dâu.', 'Nam Dược Thần Hiệu - Chương IX'),
+('4_1_0', 'prescription', 'Bài thuốc Lôi Thiên Đại Tráng (Trấn Can Tức Phong)', 'Trị cao huyết áp, chóng mặt, đầu nặng.', 199000, 'Hạ khô thảo, Câu đằng, Hoa hòe.', 'Kinh Can', 'Sắc uống hàng ngày.', 'Nam Dược Thần Hiệu - Chương I'),
+('4_8_0', 'prescription', 'Bài thuốc Lôi Trạch Quy Muội (Điều Kinh Tán)', 'Trị phụ nữ kinh nguyệt không đều, huyết uất.', 199000, 'Đương quy, Hương phụ, Ích mẫu thảo.', 'Kinh Can, Tử cung', 'Sắc uống trước kỳ kinh.', 'Nam Dược Thần Hiệu - Chương X'),
+('4_3_0', 'prescription', 'Bài thuốc Lôi Hỏa Phong (Thanh Can Tả Hỏa)', 'Trị mắt đỏ, tính tình nóng nảy, tai ù.', 199000, 'Long đởm thảo, Chi tử, Hoàng cầm.', 'Kinh Can', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương I'),
+('4_5_0', 'prescription', 'Bài thuốc Lôi Phong Hằng (Khu Phong Hoạt Lạc)', 'Trị đau khớp mãn tính, phong thấp.', 199000, 'Độc hoạt, Tang ký sinh, Tần giao.', 'Kinh Can, Kinh Thận', 'Sắc uống ấm.', 'Nam Dược Thần Hiệu - Chương VII'),
+('4_6_0', 'prescription', 'Bài thuốc Lôi Thủy Giải (Thông Kinh Hoạt Huyết)', 'Giải tỏa uất kết, trị đau tức sườn ngực.', 199000, 'Sài hồ, Uất kim, Chỉ xác, Hương phụ.', 'Kinh Can', 'Sắc uống lúc đói.', 'Nam Dược Thần Hiệu - Chương VII'),
+('4_7_0', 'prescription', 'Bài hiệu Lôi Sơn Tiểu Quá (Chỉ Thống Tán)', 'Trị các chứng đau cơ, co thắt khớp nhẹ.', 199000, 'Mộc qua, Bạch thược, Cam thảo.', 'Kinh Can', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VII'),
+('4_2_0', 'prescription', 'Bài thuốc Lôi Địa Dự (Tùng Can Kiện Tỳ)', 'Trị tiêu hóa kém do can tỳ bất hòa.', 199000, 'Sài hồ, Bạch truật, Phục linh.', 'Kinh Can, Kinh Tỳ', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VI'),
 
--- 4. Sơn Thủy Mông
-('7_6_1', 'prescription', 'Bài thuốc Sơn Thủy Mông',
- 'Bổ thận, tỳ theo hành Thổ - Thủy. Các vị thuốc: Đại táo, Bồ hòn, Dấm.',
- 50,
- 'Đại táo (TH001), Bồ hòn (T002), Dấm (M002)',
- 'Kinh Tỳ, Kinh Thận',
- 'Sắc 350ml, uống 2 lần. Bổ khí, tăng cường tiêu hóa.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
+-- NHÓM TỐN (MỘC)
+('5_5_0', 'prescription', 'Bài thuốc Tốn Vi Phong (Thần Tiễn Tán)', 'Trị trúng phong, liệt nửa người, méo mồm.', 199000, 'Kinh giới, Phòng phong, Khương hoạt, Sài hồ.', 'Kinh Can', 'Sắc với gừng tươi.', 'Nam Dược Thần Hiệu - Chương I'),
+('5_1_0', 'prescription', 'Bài thuốc Phong Thiên Tiểu Súc (Sơ Phong Giải Biểu)', 'Trị cảm gió nhẹ, hắt hơi, sổ mũi.', 199000, 'Bạc hà, Kinh giới, Lá tía tô.', 'Kinh Phế', 'Sắc uống nóng.', 'Nam Dược Thần Hiệu - Chương III'),
+('5_8_0', 'prescription', 'Bài thuốc Phong Trạch Trung Phu (Nhuận Phế Chỉ Khái)', 'Trị ho khan do gió, ngứa họng.', 199000, 'Tang diệp, Cúc hoa, Hạnh nhân.', 'Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('5_3_0', 'prescription', 'Bài thuốc Phong Hỏa Gia Nhân (Thanh Nhiệt Sơ Can)', 'Trị đau đầu do hỏa bốc, mắt mờ.', 199000, 'Kỷ tử, Cúc hoa, Quyết minh tử.', 'Kinh Can, Kinh Tâm', 'Sắc uống thay trà.', 'Nam Dược Thần Hiệu - Chương I'),
+('5_4_0', 'prescription', 'Bài thuốc Phong Lôi Ích (Bổ Huyết Khứ Phong)', 'Trị tê bại do huyết hư không dưỡng được gân.', 199000, 'Đương quy, Thục địa, Kê huyết đằng.', 'Kinh Can', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VII'),
+('5_6_0', 'prescription', 'Bài thuốc Phong Thủy Hoán (Tán Thấp Thông Lạc)', 'Trị phù thũng do phong thấp.', 199000, 'Quế chi, Phục linh, Trạch tả.', 'Kinh Bàng Quang', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương IV'),
+('5_7_0', 'prescription', 'Bài thuốc Phong Sơn Tiệm (Kiện Tỳ Khứ Thấp)', 'Trị ăn ít, người mệt, chân tay nặng nề.', 199000, 'Bạch truật, Ý dĩ, Đẳng sâm.', 'Kinh Tỳ', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VI'),
+('5_2_0', 'prescription', 'Bài thuốc Phong Địa Quan (Lý Khí Chỉ Thống)', 'Trị đau bụng kinh, khí trệ.', 199000, 'Hương phụ, Ngải cứu, Ích mẫu.', 'Kinh Can', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương X'),
 
--- 5. Thủy Thiên Nhu
-('6_1_1', 'prescription', 'Bài thuốc Thủy Thiên Nhu',
- 'Bổ thận, phổi theo hành Thủy - Kim. Các vị thuốc: Dấm, Ô dược, Sa nhân.',
- 50,
- 'Dấm (M002), Ô dược (K001), Sa nhân (K002)',
- 'Kinh Thận, Kinh Phế',
- 'Sắc 300ml, uống 2 lần. Bổ phổi thận, tăng cường hô hấp.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
+-- NHÓM LY (HỎA)
+('3_3_0', 'prescription', 'Bài thuốc Ly Vi Hỏa (Thanh Cách Tán)', 'Thanh nhiệt độc thượng tiêu, trị tâm phiền.', 199000, 'Hoàng liên, Chi tử, Liên kiều.', 'Kinh Tâm', 'Sắc uống nguội.', 'Nam Dược Thần Hiệu - Chương III'),
+('3_1_0', 'prescription', 'Bài thuốc Hỏa Thiên Đại Hữu (Tả Hỏa Thông Tiện)', 'Trị nhiệt kết, táo bón, tiểu đỏ.', 199000, 'Đại hoàng, Mang tiêu, Hoàng cầm.', 'Kinh Đại Trường', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương IV'),
+('3_8_0', 'prescription', 'Bài thuốc Hỏa Trạch Khuy (Thanh Hỏa Nhuận Họng)', 'Trị loét miệng, sưng lợi, họng khô.', 199000, 'Huyền sâm, Sinh địa, Tri mẫu.', 'Kinh Tâm, Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('3_4_0', 'prescription', 'Bài thuốc Hỏa Lôi Thệ Hạp (Giải Độc Tiêu Sưng)', 'Trị mụn nhọt, sưng đau do nhiệt độc.', 199000, 'Kim ngân hoa, Bồ công anh, Sài đất.', 'Kinh Tâm', 'Sắc uống và đắp ngoài.', 'Nam Dược Thần Hiệu - Chương III'),
+('3_5_0', 'prescription', 'Bài thuốc Hỏa Phong Đỉnh (Sơ Đới Tâm Hỏa)', 'Trị mất ngủ, hay quên, hồi hộp.', 199000, 'Viễn chí, Táo nhân, Phục thần.', 'Kinh Tâm', 'Sắc uống trước khi ngủ.', 'Nam Dược Thần Hiệu - Chương X'),
+('3_6_0', 'prescription', 'Bài thuốc Hỏa Thủy Vị Tế (Thanh Nhiệt Dưỡng Âm)', 'Trị nóng trong xương, ra mồ hôi trộm.', 199000, 'Địa cốt bì, Tri mẫu, Hoàng bá.', 'Kinh Thận, Kinh Tâm', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương V'),
+('3_7_0', 'prescription', 'Bài thuốc Hỏa Sơn Lữ (An Thần Định Chí)', 'Trị tâm thần bất an, hay nằm mơ.', 199000, 'Chu sa, Long cốt, Mẫu lệ.', 'Kinh Tâm', 'Tán bột làm viên.', 'Nam Dược Thần Hiệu - Chương IX'),
+('3_2_0', 'prescription', 'Bài thuốc Hỏa Địa Tấn (Thanh Tâm Kiện Tỳ)', 'Trị lo âu dẫn đến ăn không ngon.', 199000, 'Hạt sen, Long nhãn, Đại táo.', 'Kinh Tâm, Kinh Tỳ', 'Nấu chè hoặc sắc uống.', 'Nam Dược Thần Hiệu - Chương VI'),
 
--- 6. Thiên Thủy Tụng
-('1_6_1', 'prescription', 'Bài thuốc Thiên Thủy Tụng',
- 'Thanh phổi, thận theo hành Kim - Thủy. Các vị thuốc: Tô diệp, Bồ hòn, Cam thảo.',
- 50,
- 'Tô diệp (K003), Bồ hòn (T002), Cam thảo (TH004)',
- 'Kinh Phế, Kinh Thận',
- 'Sắc 350ml, uống ấm. Thanh nhiệt, bổ thận.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
+-- NHÓM KHẢM (THỦY)
+('6_6_0', 'prescription', 'Bài thuốc Khảm Vi Thủy (Lục Vị Địa Hoàng)', 'Bổ thận âm, trị lưng đau gối mỏi.', 199000, 'Thục địa, Sơn thù, Hoài sơn, Trạch tả.', 'Kinh Thận', 'Làm viên mật.', 'Nam Dược Thần Hiệu - Chương V'),
+('6_1_0', 'prescription', 'Bài thuốc Thủy Thiên Nhu (Kim Thủy Tương Sinh)', 'Bổ cả phổi và thận, trị ho lâu ngày.', 199000, 'Mạch môn, Sa sâm, Kỷ tử.', 'Kinh Phế, Kinh Thận', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('6_8_0', 'prescription', 'Bài thuốc Thủy Trạch Tiết (Lợi Niệu Thông Lâm)', 'Trị đái rắt, đái buốt.', 199000, 'Tỳ giải, Khổ sâm, Kim tiền thảo.', 'Kinh Bàng Quang', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương V'),
+('6_3_0', 'prescription', 'Bài thuốc Thủy Hỏa Ký Tế (Giao Thái Hoàn)', 'Tâm thận tương giao, trị mất ngủ.', 199000, 'Hoàng liên, Nhục quế.', 'Kinh Tâm, Kinh Thận', 'Làm viên uống.', 'Nam Dược Thần Hiệu - Lý luận Tâm Thận'),
+('6_4_0', 'prescription', 'Bài thuốc Thủy Lôi Truân (Bổ Thận Dưỡng Gan)', 'Trị thận hư gây ù tai, gan yếu gây mờ mắt.', 199000, 'Thục địa, Câu kỷ tử, Cúc hoa.', 'Kinh Thận, Kinh Can', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương V'),
+('6_5_0', 'prescription', 'Bài thuốc Thủy Phong Tỉnh (Thông Thận Khí)', 'Trị chứng bí tiểu do lạnh (thận dương hư).', 199000, 'Quế chi, Phụ tử, Phục linh.', 'Kinh Thận', 'Sắc uống nóng.', 'Nam Dược Thần Hiệu - Chương V'),
+('6_7_0', 'prescription', 'Bài thuốc Thủy Sơn Kiển (Bổ Thận Tỳ)', 'Trị phù thũng, người nặng nề mệt mỏi.', 199000, 'Ngũ gia bì, Đỗ trọng, Bạch truật.', 'Kinh Thận, Kinh Tỳ', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương IV'),
+('6_2_0', 'prescription', 'Bài thuốc Thủy Địa Tỷ (Ôn Thận Lợi Thủy)', 'Trị tiểu đêm nhiều lần, chân tay lạnh.', 199000, 'Phá cố chỉ, Nhục thung dung.', 'Kinh Thận', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương V'),
 
--- 7. Địa Thủy Sư
-('2_6_1', 'prescription', 'Bài thuốc Địa Thủy Sư',
- 'Bổ tỳ, thận theo hành Thổ - Thủy. Các vị thuốc: Mía, Dấm, Bồ hòn.',
- 50,
- 'Mía (TH002), Dấm (M002), Bồ hòn (T002)',
- 'Kinh Tỳ, Kinh Thận',
- 'Sắc 350ml, uống 2 lần. Bổ tỳ thận, tăng sức khỏe.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
+-- NHÓM CẤN (THỔ)
+('7_7_0', 'prescription', 'Bài thuốc Cấn Vi Sơn (Sâm Linh Bạch Truật)', 'Trị tỳ hư, tiêu chảy mãn tính.', 199000, 'Đẳng sâm, Bạch truật, Hoài sơn, Liên nhục.', 'Kinh Tỳ', 'Tán bột uống với nước cơm.', 'Nam Dược Thần Hiệu - Chương VI'),
+('7_1_0', 'prescription', 'Bài thuốc Sơn Thiên Đại Súc (Bổ Khí An Thai)', 'Dưỡng thai, trị khí hư động thai.', 199000, 'Gai rễ, Củ gai, Trữ ma căn.', 'Kinh Tỳ, Tử cung', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương X'),
+('7_8_0', 'prescription', 'Bài thuốc Sơn Trạch Tổn (ÍCH Vị Chỉ Khái)', 'Trị ho do vị nhiệt bốc lên.', 199000, 'Mướp đắng, Lá dâu, Lá lốt.', 'Kinh Vị, Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('7_3_0', 'prescription', 'Bài thuốc Sơn Hỏa Bí (Điều Hòa Tỳ Tâm)', 'Trị ăn xong hồi hộp, lo âu.', 199000, 'Hạt sen, Phục thần, Viễn chí.', 'Kinh Tỳ, Kinh Tâm', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VI'),
+('7_4_0', 'prescription', 'Bài thuốc Sơn Lôi Di (Dưỡng Vị Chỉ Ẩu)', 'Trị nôn mửa, nấc cụt.', 199000, 'Gừng tươi, Trần bì, Bán hạ chế.', 'Kinh Vị', 'Sắc uống ấm.', 'Nam Dược Thần Hiệu - Chương VI'),
+('7_5_0', 'prescription', 'Bài thuốc Sơn Phong Cổ (Trị Trùng Tích)', 'Trị đau bụng giun, tiêu hóa kém.', 199000, 'Sử quân tử, Binh lang, Khổ luyện bì.', 'Kinh Vị, Ruột', 'Sắc uống lúc đói.', 'Nam Dược Thần Hiệu - Chương VI'),
+('7_6_0', 'prescription', 'Bài thuốc Sơn Thủy Mông (Khai Tâm Thông Khiếu)', 'Trị chứng hay quên, đầu óc mơ hồ.', 199000, 'Xương bồ, Viễn chí, Phục linh.', 'Kinh Tâm, Kinh Thận', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương IX'),
+('7_2_0', 'prescription', 'Bài thuốc Sơn Địa Bác (Bổ Trung Ích Khí)', 'Trị sa dạ dày, cơ nhục yếu bủng.', 199000, 'Hoàng kỳ, Nhân sâm, Bạch truật, Thăng ma.', 'Kinh Tỳ', 'Sắc uống buổi sáng.', 'Nam Dược Thần Hiệu - Chương VI'),
 
--- 8. Thủy Địa Tỷ
-('6_2_1', 'prescription', 'Bài thuốc Thủy Địa Tỷ',
- 'Điều hòa thận, tỳ theo hành Thủy - Thổ. Các vị thuốc: Bồ hòn, Đại táo, Dừa.',
- 50,
- 'Bồ hòn (T002), Đại táo (TH001), Dừa (TH003)',
- 'Kinh Thận, Kinh Tỳ',
- 'Sắc 300ml, uống sau ăn. Điều hòa tỳ thận.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
+-- NHÓM ĐOÀI (KIM)
+('2_2_0', 'prescription', 'Bài thuốc Đoài Vi Trạch (Cam Thảo Tế Tân)', 'Trị hôi miệng, lở loét lưỡi.', 199000, 'Cam thảo, Tế tân, Hoàng liên.', 'Kinh Tâm, Miệng', 'Ngậm và súc miệng.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_1_0', 'prescription', 'Bài thuốc Trạch Thiên Quải (Thông Phế Chỉ Khái)', 'Trị ho có đờm, ngực tức.', 199000, 'Bán hạ, Trần bì, Cát cánh.', 'Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_3_0', 'prescription', 'Bài thuốc Trạch Hỏa Cách (Tả Hỏa Nhuận Phế)', 'Trị ho ra máu, phổi nóng.', 199000, 'A giao, Sinh địa, Ngẫu tiết.', 'Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_4_0', 'prescription', 'Bài thuốc Trạch Lôi Tùy (Điều Hòa Can Phế)', 'Trị ho do tức giận (Can hỏa phạm phế).', 199000, 'Sài hồ, Bạch thược, Cát cánh.', 'Kinh Can, Kinh Phế', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_5_0', 'prescription', 'Bài thuốc Trạch Phong Đại Quá (Sơ Phong Thông Khiếu)', 'Trị viêm xoang, nghẹt mũi.', 199000, 'Tân di, Bạch chỉ, Phòng phong.', 'Kinh Phế, Mũi', 'Sắc uống và xông mũi.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_6_0', 'prescription', 'Bài thuốc Trạch Thủy Khốn (Bổ Phế Thận)', 'Trị suyễn lâu ngày, hụt hơi.', 199000, 'Ngũ vị tử, Thục địa, Nhân sâm.', 'Kinh Phế, Kinh Thận', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_7_0', 'prescription', 'Bài thuốc Trạch Sơn Hàm (Nhuận Tỳ Phế)', 'Trị khô cổ họng, ăn uống khó nuốt.', 199000, 'Sa sâm, Mạch môn, Ngọc trúc.', 'Kinh Phế, Kinh Tỳ', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương VIII'),
+('2_8_0', 'prescription', 'Bài thuốc Trạch Địa Tụy (Kiện Tỳ Thông Tiện)', 'Trị táo bón do tỳ hư.', 199000, 'Bạch truật (liều cao), Đương quy.', 'Kinh Tỳ, Đại Trường', 'Sắc uống.', 'Nam Dược Thần Hiệu - Chương IV');
 
--- 9. Phong Thiên Tiểu Súc
-('5_1_1', 'prescription', 'Bài thuốc Phong Thiên Tiểu Súc',
- 'Điều hòa gan, phổi theo hành Mộc - Kim. Các vị thuốc: Me, Ô dược, Gừng.',
- 50,
- 'Me (M001), Ô dược (K001), Gừng (K004)',
- 'Kinh Gan, Kinh Phế',
- 'Sắc 300ml, uống ấm. Giúp khí lưu thông, giải cảm.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
-
--- 10. Thiên Trạch Lý
-('1_8_1', 'prescription', 'Bài thuốc Thiên Trạch Lý',
- 'Thanh phổi, miệng họng theo hành Kim. Các vị thuốc: Sa nhân, Tô diệp, Lá lốt.',
- 50,
- 'Sa nhân (K002), Tô diệp (K003), Lá lốt (K005)',
- 'Kinh Phế, Họng',
- 'Sắc 300ml, uống hoặc súc miệng. Thanh nhiệt họng, giảm ho.',
- 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
-
--- 11. Địa Thiên Thái
-('2_1_1', 'prescription', 'Bài thuốc Địa Thiên Thái', 'Bổ tỳ, phổi theo hành Thổ - Kim', 50, 'Đại táo (TH001), Mía (TH002), Ô dược (K001)', 'Kinh Tỳ, Kinh Phế', 'Sắc 350ml, uống 2 lần', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 12. Thiên Địa Phủ
-('1_2_1', 'prescription', 'Bài thuốc Thiên Địa Phủ', 'Điều hòa phổi, tỳ theo hành Kim - Thổ', 50, 'Ô dược (K001), Đại táo (TH001), Cam thảo (TH004)', 'Kinh Phế, Kinh Tỳ', 'Sắc 300ml, uống sau ăn', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 13. Thiên Hỏa Đồng Nhân
-('1_3_1', 'prescription', 'Bài thuốc Thiên Hỏa Đồng Nhân', 'Thanh tâm, phổi theo hành Hỏa - Kim', 50, 'Chè xanh (H001), Ô dược (K001), Sa nhân (K002)', 'Kinh Tâm, Kinh Phế', 'Sắc 350ml, uống mát', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 14. Hỏa Thiên Đại Hữu
-('3_1_1', 'prescription', 'Bài thuốc Hỏa Thiên Đại Hữu', 'Điều hòa tim, phổi theo hành Hỏa - Kim', 50, 'Khổ qua (H002), Ô dược (K001), Tô diệp (K003)', 'Kinh Tâm, Kinh Phế', 'Sắc 350ml, uống chiều', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 15. Địa Sơn Khiêm
-('2_7_1', 'prescription', 'Bài thuốc Địa Sơn Khiêm', 'Bổ tỳ vị theo hành Thổ', 50, 'Đại táo (TH001), Mía (TH002), Gạo nếp (TH005)', 'Kinh Tỳ, Kinh Vị', 'Sắc 350ml hoặc nấu cháo', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 16. Lôi Địa Dự
-('4_2_1', 'prescription', 'Bài thuốc Lôi Địa Dự', 'Điều hòa gan, tỳ theo hành Mộc - Thổ', 50, 'Me (M001), Đại táo (TH001), Mía (TH002)', 'Kinh Gan, Kinh Tỳ', 'Sắc 300ml, uống sau ăn', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 17. Trạch Lôi Tùy
-('8_4_1', 'prescription', 'Bài thuốc Trạch Lôi Tùy', 'Thanh phổi, gan theo hành Kim - Mộc', 50, 'Ô dược (K001), Me (M001), Dấm (M002)', 'Kinh Phế, Kinh Gan', 'Sắc 350ml, uống ấm', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 18. Sơn Phong Cổ
-('7_5_1', 'prescription', 'Bài thuốc Sơn Phong Cổ', 'Điều hòa tỳ, gan theo hành Thổ - Mộc', 50, 'Đại táo (TH001), Me (M001), Chanh (M003)', 'Kinh Tỳ, Kinh Gan', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 19. Địa Trạch Lâm
-('2_8_1', 'prescription', 'Bài thuốc Địa Trạch Lâm', 'Bổ tỳ, phổi theo hành Thổ - Kim', 50, 'Mía (TH002), Ô dược (K001), Sa nhân (K002)', 'Kinh Tỳ, Kinh Phế', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 20. Phong Địa Quan
-('5_2_1', 'prescription', 'Bài thuốc Phong Địa Quan', 'Điều hòa gan, tỳ theo hành Mộc - Thổ', 50, 'Dấm (M002), Đại táo (TH001), Dừa (TH003)', 'Kinh Gan, Kinh Tỳ', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 21. Hỏa Lôi Thệ Hạp
-('3_4_1', 'prescription', 'Bài thuốc Hỏa Lôi Thệ Hạp', 'Thanh tâm, gan theo hành Hỏa - Mộc', 50, 'Chè xanh (H001), Me (M001), Dấm (M002)', 'Kinh Tâm, Kinh Gan', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 22. Sơn Hỏa Bí
-('7_3_1', 'prescription', 'Bài thuốc Sơn Hỏa Bí', 'Điều hòa tỳ, tim theo hành Thổ - Hỏa', 50, 'Đại táo (TH001), Chè xanh (H001), Khổ qua (H002)', 'Kinh Tỳ, Kinh Tâm', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 23. Sơn Địa Bác
-('7_2_1', 'prescription', 'Bài thuốc Sơn Địa Bác', 'Bổ tỳ vị theo hành Thổ', 50, 'Mía (TH002), Dừa (TH003), Cam thảo (TH004)', 'Kinh Tỳ, Kinh Vị', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 24. Địa Lôi Phục
-('2_4_1', 'prescription', 'Bài thuốc Địa Lôi Phục', 'Điều hòa tỳ, gan theo hành Thổ - Mộc', 50, 'Đại táo (TH001), Me (M001), Quất (M004)', 'Kinh Tỳ, Kinh Gan', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 25. Thiên Lôi Vô Vọng
-('1_4_1', 'prescription', 'Bài thuốc Thiên Lôi Vô Vọng', 'Điều hòa phổi, gan theo hành Kim - Mộc', 50, 'Sa nhân (K002), Me (M001), Dấm (M002)', 'Kinh Phế, Kinh Gan', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 26. Thiên Sơn Đại Súc
-('7_1_1', 'prescription', 'Bài thuốc Thiên Sơn Đại Súc', 'Bổ tỳ, phổi theo hành Thổ - Kim', 50, 'Đại táo (TH001), Ô dược (K001), Sa nhân (K002)', 'Kinh Tỳ, Kinh Phế', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 27. Sơn Lôi Di
-('7_4_1', 'prescription', 'Bài thuốc Sơn Lôi Di', 'Điều hòa tỳ, gan theo hành Thổ - Mộc', 50, 'Mía (TH002), Me (M001), Chanh (M003)', 'Kinh Tỳ, Kinh Gan', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 28. Trạch Phong Đại Quá
-('8_5_1', 'prescription', 'Bài thuốc Trạch Phong Đại Quá', 'Thanh phổi, gan theo hành Kim - Mộc', 50, 'Tô diệp (K003), Me (M001), Dấm (M002)', 'Kinh Phế, Kinh Gan', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 29. Khảm Vi Thủy
-('6_6_1', 'prescription', 'Bài thuốc Khảm Vi Thủy', 'Bổ thận, điều hòa nước theo hành Thủy', 50, 'Dấm (M002), Bồ hòn (T002), Cam thảo (TH004)', 'Kinh Thận, Kinh Bàng quang', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 30. Ly Vi Hỏa
-('3_3_1', 'prescription', 'Bài thuốc Ly Vi Hỏa', 'Thanh tâm hỏa theo hành Hỏa', 50, 'Chè xanh (H001), Khổ qua (H002), Rau đắng (H003)', 'Kinh Tâm, Kinh Tiểu tràng', 'Sắc 300ml, uống mát', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 31. Trạch Sơn Hàm
-('8_7_1', 'prescription', 'Bài thuốc Trạch Sơn Hàm', 'Điều hòa phổi, tỳ theo hành Kim - Thổ', 50, 'Ô dược (K001), Đại táo (TH001), Mía (TH002)', 'Kinh Phế, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 32. Lôi Phong Hằng
-('4_5_1', 'prescription', 'Bài thuốc Lôi Phong Hằng', 'Điều hòa gan, mật theo hành Mộc', 50, 'Me (M001), Dấm (M002), Chanh (M003)', 'Kinh Gan, Kinh Mật', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 33. Thiên Sơn Độn
-('1_7_1', 'prescription', 'Bài thuốc Thiên Sơn Độn', 'Bổ phổi, tỳ theo hành Kim - Thổ', 50, 'Ô dược (K001), Đại táo (TH001), Dừa (TH003)', 'Kinh Phế, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 34. Lôi Thiên Đại Tráng
-('4_1_1', 'prescription', 'Bài thuốc Lôi Thiên Đại Tráng', 'Điều hòa gan, phổi theo hành Mộc - Kim', 50, 'Dấm (M002), Ô dược (K001), Sa nhân (K002)', 'Kinh Gan, Kinh Phế', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 35. Hỏa Địa Tấn
-('3_2_1', 'prescription', 'Bài thuốc Hỏa Địa Tấn', 'Thanh tâm, bổ tỳ theo hành Hỏa - Thổ', 50, 'Chè xanh (H001), Đại táo (TH001), Mía (TH002)', 'Kinh Tâm, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 36. Địa Hỏa Minh Di
-('2_3_1', 'prescription', 'Bài thuốc Địa Hỏa Minh Di', 'Bổ tỳ, thanh tâm theo hành Thổ - Hỏa', 50, 'Đại táo (TH001), Chè xanh (H001), Khổ qua (H002)', 'Kinh Tỳ, Kinh Tâm', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 37. Phong Hỏa Gia Nhân
-('5_3_1', 'prescription', 'Bài thuốc Phong Hỏa Gia Nhân', 'Điều hòa gan, tim theo hành Mộc - Hỏa', 50, 'Me (M001), Chè xanh (H001), Khổ qua (H002)', 'Kinh Gan, Kinh Tâm', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 38. Hỏa Trạch Khuy
-('3_8_1', 'prescription', 'Bài thuốc Hỏa Trạch Khuy', 'Thanh tâm, phổi theo hành Hỏa - Kim', 50, 'Khổ qua (H002), Ô dược (K001), Sa nhân (K002)', 'Kinh Tâm, Kinh Phế', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 39. Thủy Sơn Kiển
-('6_7_1', 'prescription', 'Bài thuốc Thủy Sơn Kiển', 'Bổ thận, tỳ theo hành Thủy - Thổ', 50, 'Dấm (M002), Đại táo (TH001), Mía (TH002)', 'Kinh Thận, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 40. Lôi Thủy Giải
-('4_6_1', 'prescription', 'Bài thuốc Lôi Thủy Giải', 'Điều hòa gan, thận theo hành Mộc - Thủy', 50, 'Me (M001), Dấm (M002), Bồ hòn (T002)', 'Kinh Gan, Kinh Thận', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 41. Sơn Trạch Tổn
-('7_8_1', 'prescription', 'Bài thuốc Sơn Trạch Tổn', 'Điều hòa tỳ, phổi theo hành Thổ - Kim', 50, 'Mía (TH002), Ô dược (K001), Tô diệp (K003)', 'Kinh Tỳ, Kinh Phế', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 42. Phong Lôi Ích
-('5_4_1', 'prescription', 'Bài thuốc Phong Lôi Ích', 'Điều hòa gan, mật theo hành Mộc', 50, 'Dấm (M002), Chanh (M003), Quất (M004)', 'Kinh Gan, Kinh Mật', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 43. Trạch Thiên Quải
-('8_1_1', 'prescription', 'Bài thuốc Trạch Thiên Quải', 'Thanh phổi theo hành Kim', 50, 'Sa nhân (K002), Tô diệp (K003), Gừng (K004)', 'Kinh Phế, Kinh Đại tràng', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 44. Thiên Phong Cấu
-('1_5_1', 'prescription', 'Bài thuốc Thiên Phong Cấu', 'Điều hòa phổi, gan theo hành Kim - Mộc', 50, 'Ô dược (K001), Me (M001), Dấm (M002)', 'Kinh Phế, Kinh Gan', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 45. Trạch Địa Tụy
-('8_2_1', 'prescription', 'Bài thuốc Trạch Địa Tụy', 'Thanh phổi, bổ tỳ theo hành Kim - Thổ', 50, 'Sa nhân (K002), Đại táo (TH001), Mía (TH002)', 'Kinh Phế, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 46. Địa Phong Thăng
-('2_5_1', 'prescription', 'Bài thuốc Địa Phong Thăng', 'Bổ tỳ, gan theo hành Thổ - Mộc', 50, 'Đại táo (TH001), Me (M001), Dấm (M002)', 'Kinh Tỳ, Kinh Gan', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 47. Trạch Thủy Khốn
-('8_6_1', 'prescription', 'Bài thuốc Trạch Thủy Khốn', 'Điều hòa phổi, thận theo hành Kim - Thủy', 50, 'Ô dược (K001), Dấm (M002), Bồ hòn (T002)', 'Kinh Phế, Kinh Thận', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 48. Thủy Phong Tỉnh
-('6_5_1', 'prescription', 'Bài thuốc Thủy Phong Tỉnh', 'Bổ thận, gan theo hành Thủy - Mộc', 50, 'Dấm (M002), Me (M001), Bồ hòn (T002)', 'Kinh Thận, Kinh Gan', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 49. Trạch Hỏa Cách
-('8_3_1', 'prescription', 'Bài thuốc Trạch Hỏa Cách', 'Thanh phổi, tâm theo hành Kim - Hỏa', 50, 'Sa nhân (K002), Chè xanh (H001), Khổ qua (H002)', 'Kinh Phế, Kinh Tâm', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 50. Hỏa Phong Đỉnh
-('3_5_1', 'prescription', 'Bài thuốc Hỏa Phong Đỉnh', 'Thanh tâm, gan theo hành Hỏa - Mộc', 50, 'Chè xanh (H001), Me (M001), Dấm (M002)', 'Kinh Tâm, Kinh Gan', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 51. Chấn Vi Lôi
-('4_4_1', 'prescription', 'Bài thuốc Chấn Vi Lôi', 'Điều hòa gan, mật theo hành Mộc', 50, 'Me (M001), Dấm (M002), Chanh (M003)', 'Kinh Gan, Kinh Mật', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 52. Cấn Vi Sơn
-('7_7_1', 'prescription', 'Bài thuốc Cấn Vi Sơn', 'Bổ tỳ vị theo hành Thổ', 50, 'Đại táo (TH001), Mía (TH002), Dừa (TH003)', 'Kinh Tỳ, Kinh Vị', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 53. Phong Sơn Tiệm
-('5_7_1', 'prescription', 'Bài thuốc Phong Sơn Tiệm', 'Điều hòa gan, tỳ theo hành Mộc - Thổ', 50, 'Me (M001), Đại táo (TH001), Mía (TH002)', 'Kinh Gan, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 54. Lôi Trạch Quy Muội
-('4_8_1', 'prescription', 'Bài thuốc Lôi Trạch Quy Muội', 'Điều hòa gan, phổi theo hành Mộc - Kim', 50, 'Dấm (M002), Ô dược (K001), Sa nhân (K002)', 'Kinh Gan, Kinh Phế', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 55. Lôi Hỏa Phong
-('4_3_1', 'prescription', 'Bài thuốc Lôi Hỏa Phong', 'Điều hòa gan, tim theo hành Mộc - Hỏa', 50, 'Me (M001), Chè xanh (H001), Khổ qua (H002)', 'Kinh Gan, Kinh Tâm', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 56. Hỏa Sơn Lữ
-('3_7_1', 'prescription', 'Bài thuốc Hỏa Sơn Lữ', 'Thanh tâm, bổ tỳ theo hành Hỏa - Thổ', 50, 'Khổ qua (H002), Đại táo (TH001), Mía (TH002)', 'Kinh Tâm, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 57. Tốn Vi Phong
-('5_5_1', 'prescription', 'Bài thuốc Tốn Vi Phong', 'Điều hòa gan, mật theo hành Mộc', 50, 'Dấm (M002), Chanh (M003), Quất (M004)', 'Kinh Gan, Kinh Mật', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 58. Đoài Vi Trạch
-('8_8_1', 'prescription', 'Bài thuốc Đoài Vi Trạch', 'Thanh phổi, họng theo hành Kim', 50, 'Ô dược (K001), Sa nhân (K002), Tô diệp (K003)', 'Kinh Phế, Họng', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 59. Phong Thủy Hoán
-('5_6_1', 'prescription', 'Bài thuốc Phong Thủy Hoán', 'Điều hòa gan, thận theo hành Mộc - Thủy', 50, 'Me (M001), Dấm (M002), Bồ hòn (T002)', 'Kinh Gan, Kinh Thận', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 60. Thủy Trạch Tiết
-('6_8_1', 'prescription', 'Bài thuốc Thủy Trạch Tiết', 'Bổ thận, phổi theo hành Thủy - Kim', 50, 'Dấm (M002), Ô dược (K001), Sa nhân (K002)', 'Kinh Thận, Kinh Phế', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 61. Phong Trạch Trung Phu
-('5_8_1', 'prescription', 'Bài thuốc Phong Trạch Trung Phu', 'Điều hòa gan, phổi theo hành Mộc - Kim', 50, 'Dấm (M002), Ô dược (K001), Tô diệp (K003)', 'Kinh Gan, Kinh Phế', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 62. Lôi Sơn Tiểu Quá
-('4_7_1', 'prescription', 'Bài thuốc Lôi Sơn Tiểu Quá', 'Điều hòa gan, tỳ theo hành Mộc - Thổ', 50, 'Me (M001), Đại táo (TH001), Dừa (TH003)', 'Kinh Gan, Kinh Tỳ', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 63. Thủy Hỏa Ký Tế
-('6_3_1', 'prescription', 'Bài thuốc Thủy Hỏa Ký Tế', 'Điều hòa thận, tim (Thủy - Hỏa giao thái)', 50, 'Dấm (M002), Chè xanh (H001), Khổ qua (H002)', 'Kinh Thận, Kinh Tâm', 'Sắc 300ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh'),
--- 64. Hỏa Thủy Vị Tế
-('3_6_1', 'prescription', 'Bài thuốc Hỏa Thủy Vị Tế', 'Cân bằng tâm thận, Hỏa - Thủy', 50, 'Chè xanh (H001), Dấm (M002), Bồ hòn (T002)', 'Kinh Tâm, Kinh Thận', 'Sắc 350ml', 'Nam Dược Thần Hiệu - Tuệ Tĩnh');
-
--- Verify exactly 64 records were inserted
-SELECT COUNT(*) as total_herbal_solutions FROM solutions WHERE solution_type = 'prescription';
+-- Kiểm tra số lượng bản ghi (Phải đủ 64)
+SELECT COUNT(*) as total_prescriptions FROM solutions WHERE solution_type = 'prescription';
