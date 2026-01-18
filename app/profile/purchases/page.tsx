@@ -90,8 +90,8 @@ export default function PurchasesPage() {
             <p className="text-muted-foreground text-center mb-4">
               Bạn chưa mua gói nào
             </p>
-            <Button onClick={() => window.location.href = "/"}>
-              Khám phá các gói dịch vụ
+            <Button onClick={() => window.location.href = "/services"}>
+              Xem các gói dịch vụ
             </Button>
           </CardContent>
         </Card>

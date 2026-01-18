@@ -25,6 +25,8 @@ export function UserNav() {
   useEffect(() => {
     const loadUser = async () => {
       const { user } = await getCurrentUser()
+      console.log("[v0] UserNav loaded user:", user)
+      console.log("[v0] User is_admin status:", user?.is_admin)
       setUser(user)
       setIsLoading(false)
     }

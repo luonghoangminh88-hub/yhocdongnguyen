@@ -453,7 +453,10 @@ export default function MainPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-3">
-            {/* CHANGE */}
+            <Button variant="ghost" size="sm" onClick={() => router.push("/services")} className="hidden md:flex">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Gói dịch vụ
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => router.push("/learn")} className="hidden md:flex">
               <BookOpen className="w-4 h-4 mr-2" />
               Tìm hiểu

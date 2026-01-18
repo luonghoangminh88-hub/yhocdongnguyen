@@ -70,5 +70,22 @@ export async function getCurrentUser() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  return { user }
+  if (!user) {
+    return { user: null }
+  }
+
+  // Fetch additional user data including is_admin from public.users table
+  const { data: userData } = await supabase
+    .from("users")
+    .select("is_admin, full_name")
+    .eq("id", user.id)
+    .single()
+
+  return {
+    user: {
+      ...user,
+      is_admin: userData?.is_admin || false,
+      full_name: userData?.full_name,
+    },
+  }
 }

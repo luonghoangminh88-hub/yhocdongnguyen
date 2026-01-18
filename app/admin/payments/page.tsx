@@ -19,7 +19,7 @@ export default async function AdminPaymentsPage() {
     redirect("/")
   }
 
-  const { data: userData } = await supabase.from("users").select("is_admin").eq("email", user.email).single()
+  const { data: userData } = await supabase.from("users").select("is_admin").eq("id", user.id).single()
 
   if (!userData?.is_admin) {
     redirect("/")

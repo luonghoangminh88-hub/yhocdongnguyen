@@ -10,19 +10,25 @@ import { createTimoDepositData, validateTimoAmount, type TimoDeposit, type TimoP
 export async function getTimoPaymentMethod() {
   const supabase = await getSupabaseServerClient()
 
-  const { data: paymentMethod, error } = await supabase
+  const { data: paymentMethods, error } = await supabase
     .from("payment_methods")
     .select("*")
     .eq("bank_code", "VCCB")
     .eq("is_active", true)
-    .single()
+    .order("created_at", { ascending: false })
+    .limit(1)
 
   if (error) {
     console.error("[v0] Error fetching Timo payment method:", error)
     return { error: "Không tìm thấy phương thức thanh toán Timo" }
   }
 
-  return { paymentMethod: paymentMethod as TimoPaymentMethod }
+  if (!paymentMethods || paymentMethods.length === 0) {
+    console.error("[v0] No active Timo payment method found")
+    return { error: "Không tìm thấy phương thức thanh toán Timo" }
+  }
+
+  return { paymentMethod: paymentMethods[0] as TimoPaymentMethod }
 }
 
 /**
