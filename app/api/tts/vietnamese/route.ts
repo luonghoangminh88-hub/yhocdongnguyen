@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { __api_key } from "path/to/apiKey" // Declare or import the __api_key variable
+
+// Declare global __api_key provided by v0 runtime
+declare global {
+  var __api_key: string | undefined
+}
 
 // Gemini TTS endpoint
 const GEMINI_TTS_ENDPOINT =
