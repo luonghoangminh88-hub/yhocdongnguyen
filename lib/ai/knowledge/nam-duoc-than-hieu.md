@@ -3,6 +3,11 @@
 ## GIỚI THIỆU
 Dữ liệu này được trích xuất từ "Nam dược thần hiệu" của Tuệ Tĩnh, phục vụ cho hệ thống tư vấn Nam Dược theo Mai Hoa Dịch Số.
 
+**Lưu ý về tối ưu hóa:**
+- Toàn bộ nội dung từ sách đã được số hóa và cấu trúc hóa trong file này
+- File PDF gốc đã được loại bỏ khỏi bundle để tối ưu hiệu suất (giảm 12.8MB)
+- AI đọc trực tiếp từ markdown này với chunking thông minh theo Ngũ Hành
+
 ## DANH MỤC VỊ THUỐC HÀNH THỦY (VỊ MẶN - CHỦ THẬN)
 
 ### T001 - Muối ăn (Phác tiêu/Thực diêm)

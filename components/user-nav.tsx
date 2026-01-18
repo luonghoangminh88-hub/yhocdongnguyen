@@ -12,13 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { User, LogOut, ShoppingBag, Menu, BookOpen } from "lucide-react"
+import { User, LogOut, ShoppingBag, Menu, BookOpen, Shield } from "lucide-react"
 import { getCurrentUser, signOut } from "@/lib/actions/auth-actions"
 import { QuickAuthModal } from "@/components/quick-auth-modal"
 
 export function UserNav() {
   const router = useRouter()
-  const [user, setUser] = useState<{ email: string; full_name?: string } | null>(null)
+  const [user, setUser] = useState<{ email: string; full_name?: string; is_admin?: boolean } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [authModalOpen, setAuthModalOpen] = useState(false)
 
@@ -139,6 +139,15 @@ export function UserNav() {
           <ShoppingBag className="mr-2 h-4 w-4" />
           <span>Gói đã mua</span>
         </DropdownMenuItem>
+        {user.is_admin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/admin/payments")}>
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Quản trị</span>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />

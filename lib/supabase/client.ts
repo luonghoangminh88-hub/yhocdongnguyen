@@ -9,3 +9,8 @@ export function getSupabaseBrowserClient() {
 
   return client
 }
+
+// Alias for consistency with server client
+export function createClient() {
+  return getSupabaseBrowserClient()
+}
